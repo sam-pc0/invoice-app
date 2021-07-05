@@ -12,8 +12,14 @@
       </b-button>
     </section>
     <div class="divider"></div>
-    <section v-animate-css="'fadeInRight'" class="row columns is-multiline">
-      <div v-for="(invoice, i) in invoices" :key="i" class="column is-3">
+    <!-- v-animate-css="'fadeInRight'" -->
+    <section class="row columns is-multiline">
+      <div
+        v-for="(invoice, i) in invoices"
+        v-animate-css="getAnimateObject(i)"
+        :key="i"
+        class="column is-3"
+      >
         <div class="card">
           <div class="card-content">
             <h3 class="is-size-3 has-text-weight-bold mb-1">
@@ -28,7 +34,7 @@
 
           <footer class="card-footer">
             <b-button
-              @click="() => handleEditInvoice(invoice.id)"
+              @click="handleEditInvoice(invoice.id)"
               class="is-ghost card-footer-item has-text-primary"
               >Edit</b-button
             >
@@ -111,6 +117,13 @@ export default {
         .catch(() =>
           this.$toast.error("An error occurred while uploading invoices")
         );
+    },
+    getAnimateObject(index) {
+      return {
+        classes: "fadeInRight",
+        delay: index * 100,
+        duration: 1000,
+      };
     },
     handleCreateInvoice() {
       this.$toast.success("Invoice templates should be shown");
