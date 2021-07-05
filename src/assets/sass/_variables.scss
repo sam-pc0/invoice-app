@@ -1,7 +1,7 @@
 // Set your colors
-$primary: #8a0009;
+$primary: hsl(356, 100, 27);
 $text-primary: $primary;
-$primary-light: hsl(3, 100, 70);
+$primary-light: hsl(3, 100, 65);
 $primary-dark: findDarkColor($primary);
 $primary-invert: findColorInvert($primary);
 $twitter: #4099ff;
