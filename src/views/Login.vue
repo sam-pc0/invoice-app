@@ -3,11 +3,9 @@
     <div class="columns login">
       <section class="login__info column">
         <div class="info__header">
-          <div class="info__logo">
-            <span class="mdi mdi-format-paint info__icon-logo"></span>
-          </div>
+          <img class="info__logo" src="@/assets/img/logo.png" alt="logo" />
           <h1 class="is-size-2 has-text-weight-bold">Invoice Generator</h1>
-          <h2 class="info__subtitle">Marco Cotón Painting, Inc.</h2>
+          <h2 class="info__subtitle">Flores's General Contruction, Inc.</h2>
         </div>
         <p class="info__caption">
           <b-icon icon="receipt" class="info__icon"></b-icon>
@@ -91,10 +89,10 @@ export default {
       authService
         .login(this.username, this.password)
         .then(() => {
-          this.$router.push("/invoice/menu");
+          this.$router.push("/invoices");
           this.$toast.success("Login Successful");
         })
-        .catch(() => this.$toast.error("Verifique los datos ingresados"));
+        .catch(() => this.$toast.error("Check your login information"));
     },
   },
 };
@@ -129,19 +127,11 @@ export default {
         margin-top: -1em;
       }
       &__logo {
-        $dimension: 5em;
+        $dimension: 9em;
         width: $dimension;
-        height: $dimension;
-        background-color: aliceblue;
-        border-radius: 50%;
-        margin-bottom: 1em;
       }
       &__icon {
         color: $primary-light;
-        &-logo {
-          color: $primary;
-          font-size: 2.9em;
-        }
       }
       &__subtitle {
         color: $primary-light;

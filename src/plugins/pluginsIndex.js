@@ -4,8 +4,8 @@ import VueToast from "vue-toast-notification";
 import VAnimateCss from "v-animate-css";
 
 import "vue-toast-notification/dist/theme-sugar.css";
-import "@/assets/sass/index.scss";
 import "buefy/dist/buefy.css";
+import "@/assets/sass/index.scss";
 
 Vue.use(VueToast, {
   position: "top",

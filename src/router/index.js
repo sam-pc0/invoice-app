@@ -5,24 +5,22 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    redirect: "invoices/login",
+    redirect: "login",
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/Login.vue"),
   },
   {
     path: "/invoices",
     name: "invoices",
-    component: () => import("../App.vue"),
-    children: [
-      {
-        path: "login",
-        name: "login",
-        component: () => import("../views/Login.vue"),
-      },
-      {
-        path: "menu",
-        name: "menu",
-        component: () => import("../views/Menu.vue"),
-      },
-    ],
+    component: () => import("@/views/Invoices.vue"),
+  },
+  {
+    path: "/invoice/:invoiceId",
+    name: "invoice",
+    component: () => import("@/views/Invoice.vue"),
   },
 ];
 
