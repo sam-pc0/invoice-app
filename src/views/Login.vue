@@ -103,6 +103,7 @@ export default {
 
 .login {
   height: 100vh;
+  margin-top: 0;
 
   &__form-container {
     width: 30em;
@@ -117,8 +118,10 @@ export default {
   }
   &__info {
     flex-direction: column;
+    //background: linear-gradient(34deg, $primary 0%, $primary-light 100%);
+    background-image: url("../assets/img/background.jpg");
+    background-position: center;
     color: aliceblue;
-    background: linear-gradient(34deg, $primary 0%, $primary-light 100%);
     text-align: left;
     .info {
       &__header {
