@@ -10,6 +10,7 @@
     "server":"node ./server/server.js"
   },
   "dependencies": {
+    "@creativebulma/bulma-divider": "^1.1.0",
     "axios": "^0.21.1",
     "buefy": "^0.9.8",
     "core-js": "^3.6.5",
