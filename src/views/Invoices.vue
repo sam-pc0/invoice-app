@@ -1,5 +1,18 @@
 <template>
   <main class="container">
+    <b-modal
+      v-model="shouldShowTemplateModal"
+      has-modal-card
+      trap-focus
+      :destroy-on-hide="true"
+    >
+      <template #default="">
+        <TemplatesModal
+          @templateSelected="() => console.log('templateSelected')"
+          @close="shouldShowTemplateModal = false"
+        />
+      </template>
+    </b-modal>
     <section
       class="
         is-flex is-justify-content-space-between is-align-items-center
@@ -52,16 +65,18 @@
 
 <script>
 import InvoiceService from "@/services/invoice";
+import TemplatesModal from "@/components/TemplatesModal";
 
 export default {
   name: "Invoices",
-  components: {},
+  components: { TemplatesModal },
   mounted() {
     this.setInvoices();
   },
   data() {
     return {
       invoices: [],
+      shouldShowTemplateModal: false,
     };
   },
   methods: {
@@ -126,10 +141,10 @@ export default {
       };
     },
     handleCreateInvoice() {
-      this.$toast.success("Invoice templates should be shown");
+      this.shouldShowTemplateModal = true;
     },
     handleEditInvoice(invoiceId) {
-      invoiceId && this.$router.push(`/invoice/${invoiceId}`);
+      invoiceId && this.$router.push(`/invoices/${invoiceId}`);
     },
     handleDeleteInvoice(invoiceId) {
       InvoiceService.delete(invoiceId)
