@@ -1,19 +1,21 @@
 // import axios from "axios";
 // import { URL } from "@/services/url";
+import MockService from "@/services/mock";
 
 export default {
   create: async (invoiceData) => {
     // return axios.post(`${URL}/invoices`, invoiceData);
-    invoiceData.id = 5;
+    invoiceData.id = 1;
     return invoiceData;
   },
   getAll: async () => {
     // return axios.get(`${URL}/invoices`);
     return [];
   },
-  get: async () => {
+  get: async (invoiceId) => {
     // return axios.get(`${URL}/invoices`);
-    return [];
+    console.info(MockService.generateInvoice(invoiceId));
+    return MockService.generateInvoice(invoiceId);
   },
   update: (invoiceData) => {
     // return axios.put(`${URL}/invoices`, invoiceData);
