@@ -80,12 +80,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/assets/sass/index.scss";
 .invoice {
   min-height: 100vh;
   background-image: url("../assets/img/background.jpg");
   background-position: center;
-  background-repeat: no-repeat;
   background-attachment: fixed;
+  background-position: cover;
 }
 </style>

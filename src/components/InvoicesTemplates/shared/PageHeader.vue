@@ -11,21 +11,6 @@
           maxlength="80"
         />
       </div>
-      <div class="page-header__buttons is-flex is-flex-direction-column">
-        <b-button
-          v-animate-css.click="getClickAnimateObject()"
-          color="is-primary-light"
-          class="mb-2"
-        >
-          Download Document
-        </b-button>
-        <b-button
-          v-animate-css.click="getClickAnimateObject()"
-          type="is-primary"
-        >
-          Save Document
-        </b-button>
-      </div>
     </div>
   </section>
 </template>
@@ -39,15 +24,6 @@ export default {
       name: this.invoiceName,
       description: this.invoiceDescription,
     };
-  },
-  methods: {
-    getClickAnimateObject() {
-      return {
-        classes: "pulse",
-        delay: 0,
-        duration: 400,
-      };
-    },
   },
 };
 </script>
