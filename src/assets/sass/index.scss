@@ -1,6 +1,7 @@
 @import "~bulma/sass/utilities/_all";
 
-@import "./_variables.scss";
+@import "./variables.scss";
+@import "./mixins.scss";
 
 .input::placeholder {
   color: rgba($primary, 0.8) !important;

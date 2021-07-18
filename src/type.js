@@ -56,8 +56,8 @@ export class BIDProposal {
     specificationNStimates,
     notIncluded,
     totalSum,
-    whitdrawnDays,
-    whitdrawnDate,
+    withdrawnDays,
+    withdrawnDate,
   }) {
     this.id = id;
     this.templateId = templateId;
@@ -68,8 +68,8 @@ export class BIDProposal {
     this.specificationNStimates = specificationNStimates;
     this.notIncluded = notIncluded;
     this.totalSum = totalSum;
-    this.whitdrawnDays = whitdrawnDays;
-    this.whitdrawnDate = whitdrawnDate;
+    this.withdrawnDays = withdrawnDays;
+    this.withdrawnDate = withdrawnDate;
   }
 }
 

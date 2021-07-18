@@ -1,9 +1,10 @@
 <template>
   <section class="proposal">
     <page-header
-      @headerChange="handlePageChange"
+      @onSave="handlePageChange"
       :invoiceName="invoice.name"
       :invoiceDescription="invoice.description"
+      :isSavedClicked="isSavedClicked"
     />
     <option-buttons
       @saveClicked="handleSave"
@@ -11,7 +12,11 @@
     />
     <section v-animate-css="animatedObject" class="invoice">
       <invoice-header invoiceType="BID Proposal" :number="invoice.number" />
-      <owner :invoiceOwner="invoice.owner" />
+      <owner
+        @onSave="handleOwnerChange"
+        :invoiceOwner="invoice.owner"
+        :isSavedClicked="isSavedClicked"
+      />
       <p class="is-size-6 mt-3">
         <b>a. Scope of work: </b> Flores's General Contruction, Inc. hereby
         submits the following specifications and estimates:
@@ -19,7 +24,7 @@
       <section class="is-flex is-justify-content-center mt-2">
         <textarea
           @keydown="(e) => autoHeight(e, '20em')"
-          :model="invoice.specificationNStimates"
+          v-model="invoice.specificationNStimates"
           class="lined-input-area input textarea is-small"
         />
       </section>
@@ -30,7 +35,7 @@
       <section class="is-flex is-justify-content-center mt-2">
         <textarea
           @keydown="(e) => autoHeight(e, '4em')"
-          :model="invoice.notIncluded"
+          v-model="invoice.notIncluded"
           class="lined-input input textarea is-small"
         />
       </section>
@@ -153,6 +158,7 @@ export default {
   data() {
     return {
       invoice: this.invoiceData,
+      isSavedClicked: false,
       animatedObject: {
         classes: "fadeInRight",
         delay: 100,
@@ -162,13 +168,25 @@ export default {
   },
   methods: {
     handleDownload() {
-      console.info(this.invoice);
+      if (!this.isSavedClicked) {
+        this.handleSave();
+      }
     },
     handleSave() {
-      console.info(this.invoice);
+      if (!this.isSavedClicked) {
+        this.isSavedClicked = true;
+        setTimeout(() => {
+          console.info(this.invoice);
+          this.isSavedClicked = false;
+        }, 100);
+      }
     },
     handlePageChange(data) {
-      console.info(data);
+      this.invoice.name = data.name;
+      this.invoice.description = data.description;
+    },
+    handleOwnerChange(owner) {
+      this.invoice.owner = owner;
     },
     autoHeight({ target }, minHeight) {
       target.style.height = minHeight;
@@ -181,17 +199,6 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/sass/index.scss";
 
-@mixin documentContainer {
-  margin-top: 2em;
-  width: 70%;
-  position: relative;
-  .invoice {
-    border: 2px solid $primary;
-    background-color: rgba($white, 0.85);
-    border-radius: 8px;
-    padding: 2em;
-  }
-}
 .proposal {
   @include documentContainer;
 }

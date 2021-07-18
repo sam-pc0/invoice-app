@@ -18,7 +18,16 @@
 <script>
 export default {
   name: "PageHeader",
-  props: ["invoiceName", "invoiceDescription"],
+  props: ["invoiceName", "invoiceDescription", "isSavedClicked"],
+  watch: {
+    isSavedClicked(newVal) {
+      newVal &&
+        this.$emit("onSave", {
+          name: this.name,
+          description: this.description,
+        });
+    },
+  },
   data() {
     return {
       name: this.invoiceName,

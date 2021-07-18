@@ -11,7 +11,7 @@
       </template>
 
       <template v-if="invoiceData.templateId === templatesEnum.INVOICE">
-        <invoice
+        <invoice-template
           @invoiceDataChange="handleInvoiceDataChange"
           :invoiceData="invoiceData"
         />
@@ -43,7 +43,7 @@ import InvoiceService from "@/services/invoice";
 import { templatesEnum } from "@/type";
 
 import BIDProposal from "@/components/InvoicesTemplates/BIDProposal";
-import Invoice from "@/components/InvoicesTemplates/InvoiceTemplate";
+import InvoiceTemplate from "@/components/InvoicesTemplates/InvoiceTemplate";
 import ContractInvoice from "@/components/InvoicesTemplates/ContractInvoice";
 import MaterialsNWorkersRecord from "@/components/InvoicesTemplates/MaterialsNWorkersRecord";
 
@@ -51,7 +51,7 @@ export default {
   name: "Invoice",
   components: {
     BIDProposal,
-    Invoice,
+    InvoiceTemplate,
     ContractInvoice,
     MaterialsNWorkersRecord,
   },
@@ -71,7 +71,6 @@ export default {
       InvoiceService.get(invoiceId)
         .then((invoiceData) => (this.invoiceData = invoiceData))
         .catch((error) => this.$toast.error(error));
-      //.catch(() => this.$toast.error("An error occurred while get invoice"));
     },
     handleInvoiceDataChange(invoiceData) {
       this.invoiceData = invoiceData;

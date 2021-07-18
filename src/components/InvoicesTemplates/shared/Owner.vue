@@ -81,7 +81,12 @@
 <script>
 export default {
   name: "Owner",
-  props: ["invoiceOwner"],
+  props: ["invoiceOwner", "isSavedClicked"],
+  watch: {
+    isSavedClicked(newVal) {
+      newVal && this.$emit("onSave", this.invoiceOwner);
+    },
+  },
   data() {
     return {
       owner: this.invoiceOwner,

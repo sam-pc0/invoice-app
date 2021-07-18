@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  name: "Option Buttons",
+  name: "OptionButtons",
   data() {
     return {
       animatedObject: {
