@@ -129,9 +129,7 @@ export default {
           ];
           this.invoices = data;
         })
-        .catch(() =>
-          this.$toast.error("An error occurred while uploading invoices")
-        );
+        .catch(() => this.$toast.error("An error occurred while get invoices"));
     },
     getAnimateObject(index) {
       return {
