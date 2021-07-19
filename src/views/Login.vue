@@ -53,6 +53,7 @@
                 Trouble login?
               </a>
               <button
+                v-animate-css.click="getClickAnimateObject()"
                 :disabled="!areFieldsWithData"
                 class="button is-primary"
                 type="submit"
@@ -93,6 +94,13 @@ export default {
           this.$toast.success("Login Successful");
         })
         .catch(() => this.$toast.error("Check your login information"));
+    },
+    getClickAnimateObject() {
+      return {
+        classes: "pulse",
+        delay: 0,
+        duration: 400,
+      };
     },
   },
 };

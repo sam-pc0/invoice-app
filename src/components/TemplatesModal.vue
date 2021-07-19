@@ -30,21 +30,21 @@
         </section>
       </template>
       <template v-else>
-        <section v-animate-css="'fadeInRight'">
+        <section>
           <form class="form__main">
-            <b-field label="Name">
+            <b-field v-animate-css="'fadeInRight'" label="Name">
               <b-input
                 v-model="invoiceName"
                 placeholder="Jhon Due Document"
               ></b-input>
             </b-field>
-            <b-field label="Description">
+            <b-field v-animate-css="animatedObject" label="Description">
               <b-input
                 v-model="description"
                 class="has-fixed-size"
                 type="textarea"
                 placeholder="A short description about the content of the document"
-                maxlength="40"
+                maxlength="80"
               >
               </b-input>
             </b-field>
@@ -90,6 +90,11 @@ export default {
       invoiceName: "",
       description: "",
       templates,
+      animatedObject: {
+        classes: "fadeInRight",
+        delay: 100,
+        duration: 1000,
+      },
     };
   },
   methods: {
