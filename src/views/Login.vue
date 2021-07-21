@@ -86,7 +86,6 @@ export default {
   },
   methods: {
     handleFormSubmit() {
-      console.info(authService);
       authService
         .login(this.username, this.password)
         .then(() => {

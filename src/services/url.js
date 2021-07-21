@@ -1,5 +1,5 @@
 export const URLS = {
-  DEV: "http://localhost:5500/api/vivara",
-  PROD: "//142.93.54.128:5500/api/vivara",
+  DEV: "http://localhost:3000/api",
+  PROD: "",
 };
-export const URL = URLS.PROD;
+export const URL = URLS.DEV;
