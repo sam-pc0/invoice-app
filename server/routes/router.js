@@ -118,6 +118,7 @@ router.get("/secret-route", userMiddleware.isLoggedIn, (req, res, next) => {
   res.send("This is the secret content. Only logged in users can see that!");
 });
 
+//this is for templates
 router.post("/owner", (req, res) => {
   const ownersname = req.body.owner.name;
   const ownerownersaddress = req.body.address;
