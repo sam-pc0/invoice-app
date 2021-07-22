@@ -118,4 +118,116 @@ router.get("/secret-route", userMiddleware.isLoggedIn, (req, res, next) => {
   res.send("This is the secret content. Only logged in users can see that!");
 });
 
+//this is for templates
+router.post("/owner", (req, res) => {
+  const ownersname = req.body.owner.name;
+  const ownerownersaddress = req.body.address;
+  const ownerscity = req.body.location;
+  const ownersstate = req.body.Precio;
+  const ownerszip = req.body.CategoriaC_fk;
+  const ownersphone = req.body.phone;
+  const ownersalphone = req.body.altPhone;
+  const ownersemail = req.body.email;
+
+  let data = {
+    ownersname,
+    ownerownersaddress,
+    ownerscity,
+    ownersstate,
+    ownerszip,
+    ownersphone,
+    ownersalphone,
+    ownersemail,
+  };
+  let sql = "INSERT INTO owner ?";
+  db.query(sql, data, function (error, results) {
+    if (error) {
+      throw error;
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+router.post("/bid_proposal", (req, res) => {
+  const templateId = req.body.templateId;
+  const name_bid = req.body.name;
+  const desc_bid = req.body.description;
+  const number = req.body.number;
+  const proyectnameaddr = req.body.projectNameNAddress;
+  const scopeofwork = req.body.specificationNStimates;
+  const not_included = req.body.notIncluded;
+  const weproposeprice = req.body.totalSum;
+  const weproposedays = req.body.withdrawnDays;
+  const weproposedate = req.body.withdrawnDate;
+
+  let data = {
+    templateId,
+    name_bid,
+    desc_bid,
+    number,
+    proyectnameaddr,
+    scopeofwork,
+    not_included,
+    weproposeprice,
+    weproposedays,
+    weproposedate,
+  };
+  let sql = "INSERT INTO bid_proposal SET ?";
+  db.query(sql, data, function (error, results) {
+    if (error) {
+      throw error;
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+router.post("/invoice_item", (req, res) => {
+  const item = req.body.item;
+  const description = req.body.description;
+  const amount = req.body.amount;
+
+  let data = {
+    item,
+    description,
+    amount,
+    data,
+  };
+  let sql = "INSERT INTO invoice_item SET ?";
+  db.query(sql, data, function (error, results) {
+    if (error) {
+      throw error;
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+router.post("/invoice", (req, res) => {
+  const inv_proyectname = req.body.name;
+  const inv_proyectaddress = req.body.projectNameNAddress;
+  const ownerid_Fk_inv = req.body.owner;
+  const intem_C_fk = req.body.itemsList;
+  const totalinvoice = req.body.total;
+  const inv_date = req.body.dateSubmitted;
+
+  let data = {
+    inv_proyectname,
+    inv_proyectaddress,
+    ownerid_Fk_inv,
+    intem_C_fk,
+    totalinvoice,
+    inv_date,
+  };
+  let sql = "INSERT INTO invoice SET ?";
+  db.query(sql, data, function (error, results) {
+    if (error) {
+      throw error;
+    } else {
+      res.send(results);
+    }
+  });
+});
+
 module.exports = router;
