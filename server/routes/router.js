@@ -11,6 +11,7 @@ const db = require("../lib/db.js");
 const userMiddleware = require("../middleware/users.js");
 const cors = require("cors");
 const insert = require("./inserts.js");
+const get = require("./gets");
 
 app.use(cors());
 
@@ -122,9 +123,15 @@ router.get("/secret-route", userMiddleware.isLoggedIn, (req, res, next) => {
   res.send("This is the secret content. Only logged in users can see that!");
 });
 
+//---------------------------------------inser first temp dat an owner---------------
+
+router.post("/invoice", (req, res) => {
+  
+});
+
 //----------------------------------------------switch to chose a template----------------
-router.post("/:invoices", (req, res) => {
-  switch (req.body.menu) {
+router.post("/:menu", (req, res) => {
+  switch (req.params.menu) {
     case "1":
       insert.insTempData(req, res);
       insert.insBidProp(req, res);
@@ -146,5 +153,23 @@ router.post("/:invoices", (req, res) => {
 });
 
 //----------------------------------------------------------------------------------------
+router.get("/:menu", (req, res) => {
+  switch (req.params.menu) {
+    case "5":
+      get.getAllTempDat(req, res);
+      break;
+    case "6":
+      get.getAllInvo(req, res);
+      break;
+    case "7":
+      get.getAllMatRec(req, res);
+      break;
+    case "8":
+      get.getContInvo(req, res);
+      break;
+  }
+});
+//----------------------------------------------------------------------------------------
 
 //this is for templates
+module.exports = router;
