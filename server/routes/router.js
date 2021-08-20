@@ -10,6 +10,8 @@ const jwt = require("jsonwebtoken");
 const db = require("../lib/db.js");
 const userMiddleware = require("../middleware/users.js");
 const cors = require("cors");
+const insert = require("./inserts.js");
+const get = require("./gets");
 
 app.use(cors());
 
@@ -121,251 +123,57 @@ router.get("/secret-route", userMiddleware.isLoggedIn, (req, res, next) => {
   res.send("This is the secret content. Only logged in users can see that!");
 });
 
+//---------------------------------------inser first temp dat an owner---------------
+
+router.post("/invoice", (req, res) => {
+  insert.insTempData(req, res);
+  insert.instFirstOwn(req, res);
+});
+
 //----------------------------------------------switch to chose a template----------------
 router.post("/:menu", (req, res) => {
   switch (req.params.menu) {
     case "1":
-      db.query(
-        `INSERT INTO template_data (temp_id, temp_name, temp_desc) VALUES ('${req.body.temp_id}', '${req.body.temp_name}', '${req.body.temp_desc}');`,
-        //--insert the template data---
-        (err, result) => {
-          // user does not exists
-          if (err) {
-            throw err;
-            return res.status(400).send({
-              msg: err,
-            });
-          }
-          return res.status(201).send({
-            msg: "insertado!",
-          });
-        }
-      );
-
-      db.query(
-        `INSERT INTO bid_proposal (templateId_Fk) VALUES ('${req.body.temp_id}');`,
-        //--insert the template data---
-        (err, result) => {
-          // user does not exists
-          if (err) {
-            throw err;
-            return res.status(400).send({
-              msg: err,
-            });
-          }
-        }
-      );
-
+      insert.insTempData(req, res);
+      insert.insBidProp(req, res);
+      insert.instFirstOwn(req, res);
       break;
     case "2":
-      db.query(
-        `INSERT INTO template_data (temp_id, temp_name, temp_desc) VALUES ('${req.body.temp_id}', '${req.body.temp_name}', '${req.body.temp_desc}');`,
-        //--insert the template data---
-        (err, result) => {
-          // user does not exists
-          if (err) {
-            throw err;
-            return res.status(400).send({
-              msg: err,
-            });
-          }
-          return res.status(201).send({
-            msg: "insertado!",
-          });
-        }
-      );
-
-      db.query(
-        `INSERT INTO invoice (templateId_Fk) VALUES ('${req.body.temp_id}');`,
-        //--insert the template data---
-        (err, result) => {
-          // user does not exists
-          if (err) {
-            throw err;
-            return res.status(400).send({
-              msg: err,
-            });
-          }
-        }
-      );
-
+      insert.insTempData(req, res);
+      insert.insInvoice(req, res);
       break;
     case "3":
-      db.query(
-        `INSERT INTO template_data (temp_id, temp_name, temp_desc) VALUES ('${req.body.temp_id}', '${req.body.temp_name}', '${req.body.temp_desc}');`,
-        //--insert the template data---
-        (err, result) => {
-          // user does not exists
-          if (err) {
-            throw err;
-            return res.status(400).send({
-              msg: err,
-            });
-          }
-          return res.status(201).send({
-            msg: "insertado!",
-          });
-        }
-      );
-
-      db.query(
-        `INSERT INTO contract_invoice (templateId_Fk) VALUES ('${req.body.temp_id}');`,
-        //--insert the template data---
-        (err, result) => {
-          // user does not exists
-          if (err) {
-            throw err;
-            return res.status(400).send({
-              msg: err,
-            });
-          }
-        }
-      );
-
+      insert.insTempData(req, res);
+      insert.insContInv(req, res);
       break;
     case "4":
-      db.query(
-        `INSERT INTO template_data (temp_id, temp_name, temp_desc) VALUES ('${req.body.temp_id}', '${req.body.temp_name}', '${req.body.temp_desc}');`,
-        //--insert the template data---
-        (err, result) => {
-          // user does not exists
-          if (err) {
-            throw err;
-            return res.status(400).send({
-              msg: err,
-            });
-          }
-          return res.status(201).send({
-            msg: "insertado!",
-          });
-        }
-      );
-
-      db.query(
-        `INSERT INTO material_record (templateId_Fk) VALUES ('${req.body.temp_id}');`,
-        //--insert the template data---
-        (err, result) => {
-          // user does not exists
-          if (err) {
-            throw err;
-            return res.status(400).send({
-              msg: err,
-            });
-          }
-        }
-      );
-
+      insert.insTempData(req, res);
+      insert.matRec(req, res);
       break;
   }
 });
 
 //----------------------------------------------------------------------------------------
+router.get("/:menu", (req, res) => {
+  switch (req.params.menu) {
+    case "5":
+      get.getAllTempDat(req, res);
+      break;
+    case "6":
+      get.getAllInvo(req, res);
+      break;
+    case "7":
+      get.getAllMatRec(req, res);
+      break;
+    case "8":
+      get.getContInvo(req, res);
+      break;
+    case "9":
+      get.getTopTempDat(req, res);
+      break;
+  }
+});
+//----------------------------------------------------------------------------------------
 
 //this is for templates
-router.post("/owner", (req, res) => {
-  const ownersname = req.body.owner.name;
-  const ownerownersaddress = req.body.address;
-  const ownerscity = req.body.location;
-  const ownersphone = req.body.phone;
-  const ownersalphone = req.body.altPhone;
-  const ownersemail = req.body.email;
-
-  let data = {
-    ownersname,
-    ownerownersaddress,
-    ownerscity,
-    ownersphone,
-    ownersalphone,
-    ownersemail,
-  };
-  let sql = "INSERT INTO owner ?";
-  db.query(sql, data, function (error, results) {
-    if (error) {
-      throw error;
-    } else {
-      res.send(results);
-    }
-  });
-});
-
-router.post("/bid_proposal", (req, res) => {
-  const templateId = req.body.templateId;
-  const name_bid = req.body.name;
-  const desc_bid = req.body.description;
-  const number = req.body.number;
-  const proyectnameaddr = req.body.projectNameNAddress;
-  const scopeofwork = req.body.specificationNStimates;
-  const not_included = req.body.notIncluded;
-  const weproposeprice = req.body.totalSum;
-  const weproposedays = req.body.withdrawnDays;
-  const weproposedate = req.body.withdrawnDate;
-
-  let data = {
-    templateId,
-    name_bid,
-    desc_bid,
-    number,
-    proyectnameaddr,
-    scopeofwork,
-    not_included,
-    weproposeprice,
-    weproposedays,
-    weproposedate,
-  };
-  let sql = "INSERT INTO bid_proposal SET ?";
-  db.query(sql, data, function (error, results) {
-    if (error) {
-      throw error;
-    } else {
-      res.send(results);
-    }
-  });
-});
-
-router.post("/invoice_item", (req, res) => {
-  const item = req.body.item;
-  const description = req.body.description;
-  const amount = req.body.amount;
-
-  let data = {
-    item,
-    description,
-    amount,
-  };
-  let sql = "INSERT INTO invoice_item SET ?";
-  db.query(sql, data, function (error, results) {
-    if (error) {
-      throw error;
-    } else {
-      res.send(results);
-    }
-  });
-});
-
-router.post("/invoice", (req, res) => {
-  const inv_proyectname = req.body.name;
-  const inv_proyectaddress = req.body.projectNameNAddress;
-  const ownerid_Fk_inv = req.body.owner;
-  const intem_C_fk = req.body.itemsList;
-  const totalinvoice = req.body.total;
-  const inv_date = req.body.dateSubmitted;
-
-  let data = {
-    inv_proyectname,
-    inv_proyectaddress,
-    ownerid_Fk_inv,
-    intem_C_fk,
-    totalinvoice,
-    inv_date,
-  };
-  let sql = "INSERT INTO invoice SET ?";
-  db.query(sql, data, function (error, results) {
-    if (error) {
-      throw error;
-    } else {
-      res.send(results);
-    }
-  });
-});
-
 module.exports = router;
