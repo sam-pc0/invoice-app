@@ -15,9 +15,9 @@ function insTempData(req, res) {
           msg: err,
         });
       }
-      return res.status(201).send({
-        msg: "insertado!",
-      });
+      // return res.status(201).send({
+      //   msg: "insertado!",
+      // });
     }
   );
 }
@@ -84,13 +84,33 @@ function matRec(req, res) {
 
 function instFirstOwn(req, res) {
   db.query(
-    `INSERT INTO owner (ownersname) VALUES ('${req.body.temp_name}');`,
-    //--insert the template data---
-    (err) => {
-      // user does not exists
-      if (err) {
-        return res.status(400).send({
-          msg: err,
+    "SELECT *  FROM template_data ORDER BY id_data DESC LIMIT 1",
+    (error, filas) => {
+      if (error) {
+        throw error;
+      } else {
+        res.send(filas);
+        filas.map((elemento, index) => {
+          if (index == filas.length - 1) {
+            const tmp_dat_fk = elemento.id_data + 1;
+
+            let data = {
+              tmp_dat_fk,
+            };
+            let sql = "INSERT INTO owner SET  ?";
+            db.query(
+              sql,
+              data,
+
+              //--insert the template data---
+              (err) => {
+                // user does not exists
+                if (err) {
+                  throw err;
+                }
+              }
+            );
+          }
         });
       }
     }

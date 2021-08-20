@@ -126,7 +126,8 @@ router.get("/secret-route", userMiddleware.isLoggedIn, (req, res, next) => {
 //---------------------------------------inser first temp dat an owner---------------
 
 router.post("/invoice", (req, res) => {
-  
+  insert.insTempData(req, res);
+  insert.instFirstOwn(req, res);
 });
 
 //----------------------------------------------switch to chose a template----------------
@@ -166,6 +167,9 @@ router.get("/:menu", (req, res) => {
       break;
     case "8":
       get.getContInvo(req, res);
+      break;
+      case "9":
+      get.getTopTempDat(req, res);
       break;
   }
 });

@@ -53,7 +53,26 @@ function getContInvo(req, res) {
   });
 }
 
+function getTopTempDat(req, res) {
+  db.query(
+    "SELECT *  FROM template_data ORDER BY id_data DESC LIMIT 1",
+    (error, filas) => {
+      if (error) {
+        throw error;
+      } else {
+        res.send(filas);
+        filas.map((fruit, index) => {
+          console.log(index, fruit.id_data);
+          const dat = fruit.id_data;
+          console.log(dat);
+        });
+      }
+    }
+  );
+}
+
 exports.getAllTempDat = getAllTempDat;
 exports.getAllInvo = getAllInvo;
 exports.getAllMatRec = getAllMatRec;
 exports.getContInvo = getContInvo;
+exports.getTopTempDat = getTopTempDat;
