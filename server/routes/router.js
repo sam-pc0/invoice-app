@@ -168,7 +168,7 @@ router.get("/:menu", (req, res) => {
     case "8":
       get.getContInvo(req, res);
       break;
-      case "9":
+    case "9":
       get.getTopTempDat(req, res);
       break;
   }
