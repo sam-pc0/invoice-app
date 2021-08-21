@@ -60,6 +60,39 @@ func (h *BillHandler) GetBillByID(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, http.StatusOK, b)
 }
 
+func (h *BillHandler) BillBidProposalCreat(w http.ResponseWriter, r *http.Request) {
+	var billBid model.BillBid
+
+	err := json.NewDecoder(r.Body).Decode(&billBid)
+	if err != nil {
+		log.Println("[Handler Bill Error]", err)
+		writeResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	b := model.Bill{
+		ID:          billBid.ID,
+		Name:        billBid.Name,
+		Description: billBid.Description,
+	}
+	var o model.Owner
+	bid := model.BidProposal{
+		Number:                billBid.Number,
+		SpecificationStimates: billBid.SpecificationStimates,
+		NotIncluded:           billBid.NotIncluded,
+		TotalSum:              billBid.TotalSum,
+		WithdrawnDays:         string(billBid.WithdrawnDays),
+		WithdrawnDate:         billBid.WithdrawnDate,
+	}
+
+	o = billBid.Owner
+	log.Println("owner", o)
+	log.Println("bid", bid)
+	log.Println("bill", b)
+	// TODO Realizar el método de inserción para cada uno de los objetos
+	writeResponse(w, http.StatusAccepted, billBid)
+}
+
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(code)

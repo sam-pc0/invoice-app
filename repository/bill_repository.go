@@ -38,7 +38,7 @@ func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
 
 func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	query := `SELECT id, 
-	name, template_code "template_code.id",
+	name, template_code "template_code.templatecode",
 	description
 	FROM bills WHERE id = ?`
 
@@ -50,4 +50,28 @@ func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	}
 
 	return b, nil
+}
+
+func (r *BillRepository) UpdateAndCreateBill(owner model.Owner, bill model.Bill) error {
+	db := NewOwnerRepository(r.client)
+	id, err := db.SaveOwner(owner)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return err
+	}
+
+	bill.Owner.ID = id
+	query := `UPDATE bills SET 
+	template_code = ?
+	WHERE id=?`
+
+	tx := r.client.MustBegin()
+	tx.MustExec(query, id, bill.ID)
+	if err := tx.Commit(); err != nil {
+		log.Println("[BillRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+
+	return nil
 }
