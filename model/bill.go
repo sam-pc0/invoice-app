@@ -8,3 +8,17 @@ type Bill struct {
 	Template    Template `json:"template" db:"template_code"`
 	LastEdit    string   `json:"last_edit" db:"lastEdit"`
 }
+
+type BillBid struct {
+	ID                    int     `json:"id"`
+	Template_code         int     `json:"template_code"`
+	Name                  string  `json:"name"`
+	Description           string  `json:"description"`
+	Number                int     `json:"number"`
+	Owner                 Owner   `json:"owner"`
+	SpecificationStimates string  `json:"specificationstimates"`
+	NotIncluded           string  `json:"not_included"`
+	TotalSum              float32 `json:"totalsum"`
+	WithdrawnDays         int     `json:"withdrawndays"`
+	WithdrawnDate         string  `json:"withdrawndate"`
+}

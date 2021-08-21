@@ -5,7 +5,7 @@ type Owner struct {
 	Name               string `json:"name"`
 	Location           string `json:"location"`
 	Phone              string `json:"phone"`
-	AltPhone           string `json:"altphone"`
-	ProjectNameAddress string `json:"project_name_address"`
+	AltPhone           string `json:"altphone" db:"altPhone"`
+	ProjectNameAddress string `json:"project_name_address" db:"projectNameAddress"`
 	Email              string `json:"email"`
 }
