@@ -86,10 +86,8 @@ func (h *BillHandler) BillBidProposalCreat(w http.ResponseWriter, r *http.Reques
 	}
 
 	o = billBid.Owner
-	log.Println("owner", o)
-	log.Println("bid", bid)
-	log.Println("bill", b)
-	// TODO Realizar el método de inserción para cada uno de los objetos
+	err = h.S.SaveBillBid(o, b, bid)
+
 	writeResponse(w, http.StatusAccepted, billBid)
 }
 

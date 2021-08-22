@@ -52,7 +52,7 @@ func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	return b, nil
 }
 
-func (r *BillRepository) UpdateAndCreateBill(owner model.Owner, bill model.Bill) error {
+func (r *BillRepository) UpdateAndCreateBill(owner model.Owner, bill model.Bill, bid model.BidProposal) error {
 	db := NewOwnerRepository(r.client)
 	id, err := db.SaveOwner(owner)
 	if err != nil {
@@ -72,6 +72,9 @@ func (r *BillRepository) UpdateAndCreateBill(owner model.Owner, bill model.Bill)
 		tx.Rollback()
 		return err
 	}
+
+	save := NewBidProposalRepository(r.client)
+	save.SaveBidProposal(bid)
 
 	return nil
 }
