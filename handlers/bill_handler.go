@@ -81,14 +81,14 @@ func (h *BillHandler) BillBidProposalCreat(w http.ResponseWriter, r *http.Reques
 		SpecificationStimates: billBid.SpecificationStimates,
 		NotIncluded:           billBid.NotIncluded,
 		TotalSum:              billBid.TotalSum,
-		WithdrawnDays:         string(billBid.WithdrawnDays),
+		WithdrawnDays:         billBid.WithdrawnDays,
 		WithdrawnDate:         billBid.WithdrawnDate,
 	}
 
 	o = billBid.Owner
 	err = h.S.SaveBillBid(o, b, bid)
 
-	writeResponse(w, http.StatusAccepted, billBid)
+	writeResponse(w, http.StatusAccepted, "success")
 }
 
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {

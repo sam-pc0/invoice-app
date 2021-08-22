@@ -7,6 +7,6 @@ type BidProposal struct {
 	SpecificationStimates string   `json:"specificationstimates"`
 	NotIncluded           string   `json:"not_included"`
 	TotalSum              float32  `json:"totalsum"`
-	WithdrawnDays         string   `json:"withdrawndays"`
+	WithdrawnDays         int      `json:"withdrawndays"`
 	WithdrawnDate         string   `json:"withdrawndate"`
 }
