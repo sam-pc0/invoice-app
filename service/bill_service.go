@@ -8,6 +8,7 @@ import (
 type BillServie interface {
 	SaveBasicBill(model.Bill) (int, error)
 	GetBillById(int) (model.Bill, error)
+	SaveBillBid(model.Owner, model.Bill, model.BidProposal) error
 }
 
 type DefaultBillService struct {
@@ -24,4 +25,8 @@ func (s DefaultBillService) SaveBasicBill(b model.Bill) (int, error) {
 
 func (s DefaultBillService) GetBillById(id int) (model.Bill, error) {
 	return s.R.GetBillByID(id)
+}
+
+func (s DefaultBillService) SaveBillBid(o model.Owner, bill model.Bill, bid model.BidProposal) error {
+	return s.R.UpdateAndCreateBill(o, bill, bid)
 }
