@@ -52,29 +52,80 @@ func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	return b, nil
 }
 
-func (r *BillRepository) UpdateAndCreateBill(owner model.Owner, bill model.Bill, bid model.BidProposal) error {
-	db := NewOwnerRepository(r.client)
-	id, err := db.SaveOwner(owner)
+func (r *BillRepository) UpdateBillAndCreateBid(owner model.Owner, bill model.Bill, bid model.BidProposal, code int) error {
+	id, err := saveOwnerBill(r.client, owner)
 	if err != nil {
 		log.Println("[BillRepository Error]", err)
 		return err
 	}
 
-	bill.Owner.ID = id
-	query := `UPDATE bills SET 
-	template_code = ?
-	WHERE id=?`
-
-	tx := r.client.MustBegin()
-	tx.MustExec(query, id, bill.ID)
-	if err := tx.Commit(); err != nil {
+	err = updateBillOperation(r.client, code, id, bill.ID)
+	if err != nil {
 		log.Println("[BillRepository Error]", err)
-		tx.Rollback()
 		return err
 	}
 
 	save := NewBidProposalRepository(r.client)
 	save.SaveBidProposal(bid)
+
+	return nil
+}
+
+func (r *BillRepository) UpdateBillAndCreateInvoice(owner model.Owner, bil model.Bill, invoice model.Invoice, items []model.Item, code int) error {
+	id, err := saveOwnerBill(r.client, owner)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return err
+	}
+
+	err = updateBillOperation(r.client, code, id, bil.ID)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return err
+	}
+
+	save := NewInvoiceRepository(r.client)
+	idInvoice, err := save.SaveInvoice(invoice)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return err
+	}
+
+	dbItem := NewItemRepository(r.client)
+	for _, i := range items {
+		idItem, err := dbItem.SaveItem(i)
+		if err != nil {
+			log.Println("[BillRepository Error]", err)
+			return err
+		}
+		if err := dbItem.SaveItemInvoice(idItem, idInvoice); err != nil {
+			log.Println("[BillRepository Error]", err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func saveOwnerBill(c *sqlx.DB, owner model.Owner) (int, error) {
+	db := NewOwnerRepository(c)
+	return db.SaveOwner(owner)
+}
+
+func updateBillOperation(c *sqlx.DB, code, idO, idB int) error {
+	query := `UPDATE bills SET 
+	template_code = ?,
+	owner_id=?
+	WHERE id=?`
+
+	tx := c.MustBegin()
+	tx.MustExec(query, code, idO, idB)
+
+	if err := tx.Commit(); err != nil {
+		log.Println("[BillRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
 
 	return nil
 }
