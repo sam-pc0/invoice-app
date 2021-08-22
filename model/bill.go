@@ -22,3 +22,15 @@ type BillBid struct {
 	WithdrawnDays         int     `json:"withdrawndays"`
 	WithdrawnDate         string  `json:"withdrawndate"`
 }
+
+type BillInvoice struct {
+	ID             int     `json:"id"`
+	Template_code  int     `json:"template_code"`
+	Name           string  `json:"name"`
+	Description    string  `json:"description"`
+	Number         int     `json:"number"`
+	Owner          Owner   `json:"owner"`
+	Item           []Item  `json:"item" db:"item_id"`
+	Total          float32 `json:"total"`
+	DateSubmmitted string  `json:"date_submmitted"`
+}
