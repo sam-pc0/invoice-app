@@ -113,7 +113,7 @@ func (h *BillHandler) BillBidProposalCreat(w http.ResponseWriter, r *http.Reques
 			Name:        billInvoice.Name,
 			Description: billInvoice.Description,
 		}
-		o := b.Owner
+		o := billInvoice.Owner
 		invoice := model.Invoice{
 			Number:         billInvoice.Number,
 			Total:          billInvoice.Total,
