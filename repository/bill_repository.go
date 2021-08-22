@@ -53,7 +53,7 @@ func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 }
 
 func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
-	query := `SELECT id,name,description
+	query := `SELECT id,name,description,template_code
 	FROM bills`
 
 	var b []model.BillRequestGet

@@ -102,15 +102,17 @@
 ```json
 //Response Get [Array] bils
 [
-     {
+{
     "id": 5,
     "name": "Test",
+    "template_code": 1110,
     "description": "Testing",
     "last_edit": ""
   },
   {
     "id": 6,
     "name": "Test",
+    "template_code": 1110,
     "description": "Testing",
     "last_edit": ""
   }
