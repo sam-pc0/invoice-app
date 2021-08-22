@@ -13,6 +13,7 @@
 
 - `/bills` | Post --> Retorna el Id de la Bill Insertada
 - `/bills/:id` | Get
+- `/bills` | Get --> Retorna todos las bills
 - `/bills?code=1100` | Put  --> En este caso BID | QueryParam
 - `/bills?code=1110` | Put  --> En este caso Invoice | QueryParam
 
@@ -96,5 +97,23 @@
 	 "total":10,
 	 "date_submmitted":"Tue Jul 13 2021 00:00:00 GMT-0600 (Central Standard Time)"
  }
+```
+
+```json
+//Response Get [Array] bils
+[
+     {
+    "id": 5,
+    "name": "Test",
+    "description": "Testing",
+    "last_edit": ""
+  },
+  {
+    "id": 6,
+    "name": "Test",
+    "description": "Testing",
+    "last_edit": ""
+  }
+]
 ```
 

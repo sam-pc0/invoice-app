@@ -52,6 +52,20 @@ func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	return b, nil
 }
 
+func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
+	query := `SELECT id,name,description
+	FROM bills`
+
+	var b []model.BillRequestGet
+	err := r.client.Select(&b, query)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return nil, err
+	}
+
+	return b, nil
+}
+
 func (r *BillRepository) UpdateBillAndCreateBid(owner model.Owner, bill model.Bill, bid model.BidProposal, code int) error {
 	id, err := saveOwnerBill(r.client, owner)
 	if err != nil {

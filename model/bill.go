@@ -9,6 +9,13 @@ type Bill struct {
 	LastEdit    string   `json:"last_edit" db:"lastEdit"`
 }
 
+type BillRequestGet struct {
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	LastEdit    string `json:"last_edit" db:"lastEdit"`
+}
+
 type BillBid struct {
 	ID                    int     `json:"id"`
 	Template_code         int     `json:"template_code"`
