@@ -13,7 +13,9 @@
 
 - `/bills` | Post --> Retorna el Id de la Bill Insertada
 - `/bills/:id` | Get
-- `/bills?code=1100` | Put 
+- `/bills` | Get --> Retorna todos las bills
+- `/bills?code=1100` | Put  --> En este caso BID | QueryParam
+- `/bills?code=1110` | Put  --> En este caso Invoice | QueryParam
 
 ```json
 // Json Reponse Get
@@ -40,8 +42,9 @@
 
 ```json
 // Json Request BID Proposal Put
+//Se espera que sea el ID de Bill (en este ejemplo la bill 9) y no un id generado para el BID
  {
-  "id": 9, //Se espera que sea el ID de Bill y no un id generado para el BID
+  "id": 9, 
   "template_code": 1100,
 	"name": "Test invoice",
 	"description": "A short description",
@@ -62,5 +65,55 @@
      "withdrawndays": 5,
      "withdrawndate": "Tue Jul 13 2021 00:00:00 GMT-0600 (Central Standard Time)"
  }
+```
+
+```json
+// Json Request BID Proposal Put
+//Se espera que sea el ID de Bill (en este ejemplo la bill 7) y no un id generado para el Invoice 
+{
+  "id": 7, 
+  "template_code": 1110,
+	"name": "Test invoice",
+	"description": "A short description",
+	"number": 1,
+    "owner": {
+ 				"name":"Test13",
+				"location": "Jutiapa, Jutiapa 22001",
+				"phone": "12345678",
+				"altphone": "87654321",
+				"project_name_address":"xD",
+				"email":"13@correo.com"
+    },
+     "item":[
+			 {
+				 "description":"Uno",
+				 "amount":5
+			 },
+			 {
+				 "description":"Dos",
+				 "amount":5
+			 }
+		 ],
+	 "total":10,
+	 "date_submmitted":"Tue Jul 13 2021 00:00:00 GMT-0600 (Central Standard Time)"
+ }
+```
+
+```json
+//Response Get [Array] bils
+[
+     {
+    "id": 5,
+    "name": "Test",
+    "description": "Testing",
+    "last_edit": ""
+  },
+  {
+    "id": 6,
+    "name": "Test",
+    "description": "Testing",
+    "last_edit": ""
+  }
+]
 ```
 

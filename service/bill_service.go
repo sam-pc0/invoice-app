@@ -7,6 +7,7 @@ import (
 
 type BillServie interface {
 	SaveBasicBill(model.Bill) (int, error)
+	GetAllBillS() ([]model.BillRequestGet, error)
 	GetBillById(int) (model.Bill, error)
 	SaveBillBid(model.Owner, model.Bill, model.BidProposal, int) error
 	SaveBillInvoice(model.Owner, model.Bill, model.Invoice, []model.Item, int) error
@@ -22,6 +23,10 @@ func NewBillService(r repository.BillRepository) DefaultBillService {
 
 func (s DefaultBillService) SaveBasicBill(b model.Bill) (int, error) {
 	return s.R.InsertContent(b)
+}
+
+func (s DefaultBillService) GetAllBillS() ([]model.BillRequestGet, error) {
+	return s.R.GetAllBills()
 }
 
 func (s DefaultBillService) GetBillById(id int) (model.Bill, error) {
