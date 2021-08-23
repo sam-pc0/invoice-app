@@ -51,3 +51,24 @@ func (r *BidProposalRepository) GetBidAndBillByID(id int) (model.BillJionBid, er
 
 	return b, nil
 }
+
+func (r *BidProposalRepository) UpdateBid(b model.BidProposal, id int) error {
+	query := `UPDATE bid_proposal SET
+	number_bid=?,
+	specifications_stimates=?,
+	not_included=?,
+	totalSum=?,
+	withdrawn_days=?,
+	withdrawn_date=?
+	WHERE id=?`
+
+	tx := r.client.MustBegin()
+	tx.MustExec(query, b.Number, b.SpecificationStimates, b.NotIncluded, b.TotalSum, b.WithdrawnDays, b.WithdrawnDate, id)
+	if err := tx.Commit(); err != nil {
+		log.Println("[BidProposalRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+
+	return nil
+}

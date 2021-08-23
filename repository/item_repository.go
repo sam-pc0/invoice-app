@@ -52,3 +52,19 @@ func (r *ItemRepository) SaveItemInvoice(itemID, invoiceID int) error {
 
 	return nil
 }
+
+func (r *ItemRepository) UpdateItem(i model.Item, id int) error {
+	query := `UPDATE items SET
+	description = ?,
+	amount = ?
+	WHERE id = ?`
+	tx := r.client.MustBegin()
+	tx.MustExec(query, i.Description, i.Amount, id)
+	if err := tx.Commit(); err != nil {
+		log.Println("[ItemRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+
+	return nil
+}

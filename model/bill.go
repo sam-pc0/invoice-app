@@ -32,6 +32,8 @@ type BillBid struct {
 	LastEdit              string  `db:"lastEdit"`
 }
 
+// BillJionBid La estructura que se espera
+// sea devuelta para hacer el update
 type BillJionBid struct {
 	ID                    int     `json:"id" db:"id"`
 	ID_BID                int     `json:"id_bid" db:"id_bid"`
@@ -45,7 +47,7 @@ type BillJionBid struct {
 	TotalSum              float32 `json:"totalsum" db:"totalSum"`
 	WithdrawnDays         int     `json:"withdrawndays" db:"withdrawn_days"`
 	WithdrawnDate         string  `json:"withdrawndate" db:"withdrawn_date"`
-	LastEdit              string  `db:"lastEdit"`
+	LastEdit              string  `json:"last_edit" db:"lastEdit"`
 }
 
 type BillInvoice struct {
@@ -58,4 +60,20 @@ type BillInvoice struct {
 	Item           []Item  `json:"item" db:"item_id"`
 	Total          float32 `json:"total"`
 	DateSubmmitted string  `json:"date_submmitted"`
+}
+
+// BillJoinInvoice La estructura que se espera
+// sea devuelta para hacer el update
+type BillJoinInvoice struct {
+	ID             int     `json:"id" db:"id_bill"`
+	InvoiceID      int     `json:"invoice_id" db:"invoice_id"`
+	Template_code  int     `json:"template_code"`
+	Name           string  `json:"name"`
+	Description    string  `json:"description"`
+	Number         int     `json:"number" db:"number_inv"`
+	Owner          Owner   `json:"owner"`
+	Item           []Item  `json:"item" db:"item"`
+	Total          float32 `json:"total"`
+	DateSubmmitted string  `json:"date_submmitted" db:"date_submmitted"`
+	LastEdit       string  `json:"last_edit" db:"lastEdit"`
 }
