@@ -43,9 +43,30 @@ func (r *OwnerRepository) GetOwnerByID(id int) (model.Owner, error) {
 	var o model.Owner
 	err := r.client.Get(&o, query, id)
 	if err != nil {
-		log.Println("[BillRepository Error]", err)
+		log.Println("[OwnerRepository Error]", err)
 		return model.Owner{}, err
 	}
 
 	return o, nil
+}
+
+func (r *OwnerRepository) UpdateOwner(o model.Owner, id int) error {
+	query := `UPDATE owner SET
+	name = ?,
+	location = ?,
+	phone = ?,
+	altPhone = ?,
+	projectNameAddress = ?,
+	email = ?
+	WHERE id=?`
+
+	tx := r.client.MustBegin()
+	tx.MustExec(query, o.Name, o.Location, o.Phone, o.AltPhone, o.ProjectNameAddress, o.Email, id)
+	if err := tx.Commit(); err != nil {
+		log.Println("[OwnerRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+
+	return nil
 }

@@ -12,6 +12,10 @@ type BillServie interface {
 	SaveBillBid(model.Owner, model.Bill, model.BidProposal, int) error
 	SaveBillInvoice(model.Owner, model.Bill, model.Invoice, []model.Item, int) error
 	GetBidBill(int) (model.BillJionBid, error)
+	GetInvoiceBill(int) (model.BillJoinInvoice, error)
+	VerifyCode(int) (int, error)
+	UpdateBillBid(model.Owner, model.Bill, model.BidProposal) error
+	UpdateBillInvoice(model.Owner, model.Bill, model.Invoice, []model.Item) error
 }
 
 type DefaultBillService struct {
@@ -44,4 +48,20 @@ func (s DefaultBillService) SaveBillInvoice(o model.Owner, b model.Bill, inv mod
 
 func (s DefaultBillService) GetBidBill(id int) (model.BillJionBid, error) {
 	return s.R.GetBillContentByID(id)
+}
+
+func (s DefaultBillService) GetInvoiceBill(id int) (model.BillJoinInvoice, error) {
+	return s.R.GetBillInvoiceContentByID(id)
+}
+
+func (s DefaultBillService) VerifyCode(id int) (int, error) {
+	return s.R.VerifyCode(id)
+}
+
+func (s DefaultBillService) UpdateBillBid(o model.Owner, b model.Bill, bid model.BidProposal) error {
+	return s.R.UpdateContentBid(o, b, bid)
+}
+
+func (s DefaultBillService) UpdateBillInvoice(o model.Owner, b model.Bill, in model.Invoice, it []model.Item) error {
+	return s.R.UpdateContentInvoice(o, b, in, it)
 }

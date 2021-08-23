@@ -39,11 +39,11 @@ func (r *InvoiceRepository) SaveInvoice(invoice model.Invoice, id int) (int, err
 }
 
 func (r *InvoiceRepository) GetInvoiceAndBillByID(id int) (model.BillJoinInvoice, error) {
-	query := `SELECT bills.id,bills.template_code,
-	bills.name, bills.description, bills.lastEdit,
-	owner.id, owner.name, owner.location, owner.phone, owner.altPhone, owner.projectNameAddress, owner.email,
-	invoices.id, invoices.number_inv, invoices.total, invoices.dateSubmmitted,
-	item_invoice.id, items.id, items.description, items.amount 
+	query := `SELECT bills.id "id_bill",bills.template_code,
+	bills.name , bills.description, bills.lastEdit,
+	owner.id "owner.id", owner.name "owner.name", owner.location "owner.location", owner.phone "owner.phone", 
+	owner.altPhone "owner.altPhone", owner.projectNameAddress "owner.projectNameAddress", owner.email "owner.email",
+	invoices.id "invoice_id", invoices.number_inv "number_inv", invoices.total, invoices.dateSubmmitted "date_submmitted"
 	FROM bills  INNER JOIN owner  
 	ON bills.owner_id = owner.id
 	INNER JOIN invoices  ON invoices.id_bill = bills.id 
@@ -54,9 +54,47 @@ func (r *InvoiceRepository) GetInvoiceAndBillByID(id int) (model.BillJoinInvoice
 	var b model.BillJoinInvoice
 	err := r.client.Get(&b, query, id)
 	if err != nil {
-		log.Println("[BidProposalRepository]", err)
+		log.Println("[InvoiceRepository]", err)
 		return model.BillJoinInvoice{}, err
 	}
 
+	i, _ := r.GetItemsByll(id)
+	b.Item = i
+
 	return b, nil
+}
+
+func (r *InvoiceRepository) GetItemsByll(id int) ([]model.Item, error) {
+	query := `SELECT
+	items.id "id", items.description "description", items.amount "amount"
+	FROM items INNER JOIN item_invoice ON item_invoice.item_id = items.id
+	INNER JOIN invoices ON item_invoice.invoice_item = invoices.id
+	INNER JOIN bills ON bills.id = invoices.id_bill
+	WHERE bills.id = ?`
+	i := []model.Item{}
+	err := r.client.Select(&i, query, id)
+	if err != nil {
+		log.Println("[InvoiceRepository]", err)
+		return nil, err
+	}
+
+	return i, nil
+}
+
+func (r *InvoiceRepository) UpdateInvoice(i model.Invoice, id int) error {
+	query := `UPDATE invoices SET
+	number_inv = ?,
+	total = ?,
+	dateSubmmitted = ?
+	WHERE id = ?`
+
+	tx := r.client.MustBegin()
+	tx.MustExec(query, i.Number, i.Total, i.DateSubmmitted, id)
+	if err := tx.Commit(); err != nil {
+		log.Println("[InvoiceRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+
+	return nil
 }

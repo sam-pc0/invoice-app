@@ -65,7 +65,7 @@ func (h *BillHandler) GetBillByID(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, http.StatusOK, b)
 }
 
-func (h *BillHandler) GetBillBid(w http.ResponseWriter, r *http.Request) {
+func (h *BillHandler) GetBillContent(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -74,14 +74,108 @@ func (h *BillHandler) GetBillBid(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b, err := h.S.GetBidBill(id)
-	if err != nil {
-		log.Println("[Handler Bill Error]", err)
-		writeResponse(w, http.StatusInternalServerError, err.Error())
+	code, _ := h.S.VerifyCode(id)
+	switch code {
+	case 1100:
+		b, err := h.S.GetBidBill(id)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		writeResponse(w, http.StatusOK, b)
+	case 1110:
+		b, err := h.S.GetInvoiceBill(id)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		writeResponse(w, http.StatusOK, b)
 		return
 	}
 
-	writeResponse(w, http.StatusOK, b)
+}
+
+func (h *BillHandler) BillUpdateContent(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		log.Println("[Handler Bill Error]", err, id)
+		writeResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	code, _ := h.S.VerifyCode(id)
+
+	switch code {
+	case 1110:
+		var b model.BillJoinInvoice
+		err := json.NewDecoder(r.Body).Decode(&b)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		o := b.Owner
+		it := b.Item
+		in := model.Invoice{
+			ID:             b.InvoiceID,
+			Number:         b.Number,
+			Total:          b.Total,
+			DateSubmmitted: b.DateSubmmitted,
+		}
+		bill := model.Bill{
+			ID:          b.ID,
+			Name:        b.Name,
+			Description: b.Description,
+			LastEdit:    b.LastEdit,
+		}
+		err = h.S.UpdateBillInvoice(o, bill, in, it)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		writeResponse(w, http.StatusAccepted, "success")
+		return
+	case 1100:
+		var b model.BillJionBid
+		err := json.NewDecoder(r.Body).Decode(&b)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		o := b.Owner
+		bill := model.Bill{
+			ID:          b.ID,
+			Name:        b.Name,
+			Description: b.Description,
+			LastEdit:    b.LastEdit,
+		}
+		bid := model.BidProposal{
+			ID:                    b.ID,
+			Number:                b.Number,
+			SpecificationStimates: b.SpecificationStimates,
+			NotIncluded:           b.NotIncluded,
+			TotalSum:              b.TotalSum,
+			WithdrawnDays:         b.WithdrawnDays,
+			WithdrawnDate:         b.WithdrawnDate,
+		}
+		err = h.S.UpdateBillBid(o, bill, bid)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		writeResponse(w, http.StatusAccepted, "success")
+		return
+	default:
+		writeResponse(w, http.StatusBadRequest, "Invalid data")
+	}
 }
 
 func (h *BillHandler) BillsCreate(w http.ResponseWriter, r *http.Request) {
