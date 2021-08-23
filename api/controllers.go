@@ -24,7 +24,7 @@ func Controllers() *mux.Router {
 	router.HandleFunc("/bills/{id}", billHandler.GetBillByID).Methods("GET")
 	router.HandleFunc("/owners/{id}", ownerHandler.GetOwnerByID).Methods("GET")
 
-	router.HandleFunc("/bills", billHandler.BillBidProposalCreat).Methods("PUT")
+	router.HandleFunc("/bills", billHandler.BillsCreate).Methods("PUT")
 
 	return router
 }

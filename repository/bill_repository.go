@@ -19,7 +19,7 @@ func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
 	query := `INSERT INTO bills (name, description, template_code) VALUES (?, ?, ?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.Name, b.Description, b.Template.TemplateCode)
+	tx.MustExec(query, b.Name, b.Description, b.TemplateCode)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BillRepository Error]", err)
 		tx.Rollback()
@@ -38,7 +38,7 @@ func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
 
 func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	query := `SELECT id, 
-	name, template_code "template_code.templatecode",
+	name,
 	description
 	FROM bills WHERE id = ?`
 
@@ -80,7 +80,7 @@ func (r *BillRepository) UpdateBillAndCreateBid(owner model.Owner, bill model.Bi
 	}
 
 	save := NewBidProposalRepository(r.client)
-	save.SaveBidProposal(bid)
+	save.SaveBidProposal(bid, bill.ID)
 
 	return nil
 }
@@ -99,7 +99,7 @@ func (r *BillRepository) UpdateBillAndCreateInvoice(owner model.Owner, bil model
 	}
 
 	save := NewInvoiceRepository(r.client)
-	idInvoice, err := save.SaveInvoice(invoice)
+	idInvoice, err := save.SaveInvoice(invoice, bil.ID)
 	if err != nil {
 		log.Println("[BillRepository Error]", err)
 		return err
