@@ -15,9 +15,9 @@
             class="column is-6"
           >
             <div
-              @click="handleTemplateClick(template.id)"
+              @click="handleTemplateClick(template.code)"
               v-animate-css.click="getClickAnimateObject()"
-              :class="selectedTemplate === template.id ? 'selected' : ''"
+              :class="selectedTemplate === template.code ? 'selected' : ''"
               class="card is-flex is-align-items-center"
             >
               <div class="card-content">
@@ -100,12 +100,15 @@ export default {
   methods: {
     handleCreate() {
       const invoiceData = {
-        template: this.selectedTemplate,
+        template_code: this.selectedTemplate,
         name: this.invoiceName,
         description: this.description,
       };
+      console.info(invoiceData);
       InvoiceService.create(invoiceData)
-        .then(({ id }) => id && this.$router.push(`/invoices/${id}`))
+        .then(({ data }) => {
+          this.$router.push(`/invoices/${data}`);
+        })
         .catch(() =>
           this.$toast.error("An error occurred while deleting invoice")
         );

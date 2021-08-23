@@ -1,28 +1,28 @@
 export const templates = [
   {
     name: "BID Proposal",
-    id: 1,
+    code: 1100,
   },
   {
     name: "Invoice",
-    id: 2,
+    code: 1110,
   },
 
   {
     name: "Contract Invoice",
-    id: 3,
+    code: 1000,
   },
   {
     name: "Daily Time & Material Record",
-    id: 4,
+    code: 1001,
   },
 ];
 
 export const templatesEnum = {
-  BID_PROPOSAL: 1,
-  INVOICE: 2,
-  CONTRACT_INVOICE: 3,
-  DAILY_N_MATERIAL_RECORD: 4,
+  BID_PROPOSAL: 1100,
+  INVOICE: 1110,
+  CONTRACT_INVOICE: 1000,
+  DAILY_N_MATERIAL_RECORD: 1001,
 };
 
 export class Owner {
