@@ -68,17 +68,6 @@ func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
 }
 
 func (r *BillRepository) GetBillContentByID(id int) (model.BillJionBid, error) {
-	query := `SELECT 
-	template_code
-	FROM bills WHERE id = ?`
-
-	var code int
-	err := r.client.Get(&code, query, id)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return model.BillJionBid{}, err
-	}
-
 	dbBid := NewBidProposalRepository(r.client)
 	b, err := dbBid.GetBidAndBillByID(id)
 	if err != nil {
@@ -87,6 +76,32 @@ func (r *BillRepository) GetBillContentByID(id int) (model.BillJionBid, error) {
 	}
 
 	return b, nil
+}
+
+func (r *BillRepository) GetBillInvoiceContentByID(id int) (model.BillJoinInvoice, error) {
+	dbInv := NewInvoiceRepository(r.client)
+	b, err := dbInv.GetInvoiceAndBillByID(id)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return model.BillJoinInvoice{}, err
+	}
+
+	return b, nil
+}
+
+func (r *BillRepository) VerifyCode(id int) (int, error) {
+	query := `SELECT 
+	template_code
+	FROM bills WHERE id = ?`
+
+	var code int
+	err := r.client.Get(&code, query, id)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return 0, err
+	}
+
+	return code, nil
 }
 
 func (r *BillRepository) UpdateBillAndCreateBid(owner model.Owner, bill model.Bill, bid model.BidProposal, code int) error {
