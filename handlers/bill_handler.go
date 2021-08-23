@@ -25,12 +25,6 @@ func (h *BillHandler) NewBillBasic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if b.Template.TemplateCode == 0 {
-		log.Println("[Handler Bill Error]", "Invalid data", b.Template.TemplateCode)
-		writeResponse(w, http.StatusBadRequest, "Invalid data")
-		return
-	}
-
 	id, err := h.S.SaveBasicBill(b)
 	if err != nil {
 		log.Println("[Handler Bill Error]", err)
@@ -71,7 +65,7 @@ func (h *BillHandler) GetBillByID(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, http.StatusOK, b)
 }
 
-func (h *BillHandler) BillBidProposalCreat(w http.ResponseWriter, r *http.Request) {
+func (h *BillHandler) BillsCreate(w http.ResponseWriter, r *http.Request) {
 	var code int
 	c := r.URL.Query().Get("code")
 	code, _ = strconv.Atoi(c)
@@ -136,6 +130,9 @@ func (h *BillHandler) BillBidProposalCreat(w http.ResponseWriter, r *http.Reques
 			writeResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
+	default:
+		writeResponse(w, http.StatusBadRequest, "Invalid Data")
+		return
 	}
 
 	writeResponse(w, http.StatusAccepted, "success")

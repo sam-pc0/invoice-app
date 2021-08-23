@@ -18,6 +18,15 @@
 - `/bills?code=1110` | Put  --> En este caso Invoice | QueryParam
 
 ```json
+// Create a Bill | Post --> Retorna el Id de la Bill Insertada
+{
+	"name":"Test1",
+	"description":"Testing",
+	"template_code":1100
+}
+```
+
+```json
 // Json Reponse Get
 {
   "id": 9,
@@ -100,7 +109,7 @@
 ```
 
 ```json
-//Response Get [Array] bils
+//Response Get (Array) bils
 [
 {
     "id": 5,

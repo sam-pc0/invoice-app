@@ -15,12 +15,12 @@ func NewInvoiceRepository(db *sqlx.DB) InvoiceRepository {
 	return InvoiceRepository{db}
 }
 
-func (r *InvoiceRepository) SaveInvoice(invoice model.Invoice) (int, error) {
-	query := `INSERT INTO invoices (number_inv, total, dateSubmmitted)
-	VALUES (?,?,?)`
+func (r *InvoiceRepository) SaveInvoice(invoice model.Invoice, id int) (int, error) {
+	query := `INSERT INTO invoices (number_inv, total, dateSubmmitted, id_bill)
+	VALUES (?,?,?,?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, invoice.Number, invoice.Total, invoice.DateSubmmitted)
+	tx.MustExec(query, invoice.Number, invoice.Total, invoice.DateSubmmitted, id)
 	if err := tx.Commit(); err != nil {
 		log.Println("[InvoiceRepository Error]", err)
 		tx.Rollback()
