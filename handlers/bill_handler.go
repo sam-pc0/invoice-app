@@ -157,7 +157,7 @@ func (h *BillHandler) BillUpdateContent(w http.ResponseWriter, r *http.Request) 
 			LastEdit:    b.LastEdit,
 		}
 		bid := model.BidProposal{
-			ID:                    b.ID,
+			ID:                    b.ID_BID,
 			Number:                b.Number,
 			SpecificationStimates: b.SpecificationStimates,
 			NotIncluded:           b.NotIncluded,

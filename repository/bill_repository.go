@@ -183,8 +183,13 @@ func (r *BillRepository) UpdateContentInvoice(o model.Owner, b model.Bill, in mo
 	}
 
 	dbItem := NewItemRepository(r.client)
-	for _, i := range it {
-		err = dbItem.UpdateItem(i, i.ID)
+	for n, i := range it {
+		if n == 0 {
+			err = dbItem.UpdateItem(i, i.ID)
+		} else {
+			x, _ := dbItem.SaveItem(i)
+			err = dbItem.SaveItemInvoice(x, in.ID)
+		}
 		if err != nil {
 			log.Println("[BillRepository Error]", err)
 			return err
