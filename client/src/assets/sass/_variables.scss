@@ -1,0 +1,87 @@
+// Set your colors
+$primary: hsl(356, 100%, 27%);
+$text-primary: $primary;
+$primary-light: hsl(3, 100%, 80%);
+$primary-dark: findDarkColor($primary);
+$primary-invert: findColorInvert($primary);
+$twitter: #4099ff;
+$twitter-invert: findColorInvert($twitter);
+$white: #f4f4f4;
+$input-background: rgba($white, 0.3);
+
+// Lists and maps
+$custom-colors: null !default;
+$custom-shades: null !default;
+
+// Setup $colors to use as bulma classes (e.g. 'is-twitter')
+$colors: mergeColorMaps(
+  (
+    "white": (
+      $white,
+      $black,
+    ),
+    "black": (
+      $black,
+      $white,
+    ),
+    "light": (
+      $light,
+      $light-invert,
+    ),
+    "dark": (
+      $dark,
+      $dark-invert,
+    ),
+    "primary": (
+      $primary,
+      $primary-invert,
+      $primary-light,
+      $primary-dark,
+    ),
+    "link": (
+      $link,
+      $link-invert,
+      $link-light,
+      $link-dark,
+    ),
+    "info": (
+      $info,
+      $info-invert,
+      $info-light,
+      $info-dark,
+    ),
+    "success": (
+      $success,
+      $success-invert,
+      $success-light,
+      $success-dark,
+    ),
+    "warning": (
+      $warning,
+      $warning-invert,
+      $warning-light,
+      $warning-dark,
+    ),
+    "danger": (
+      $danger,
+      $danger-invert,
+      $danger-light,
+      $danger-dark,
+    ),
+  ),
+  $custom-colors
+);
+
+$body-background-color: $white;
+
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+$input-icon-color: $primary !important;
+$input-focus-border-color: $primary !important;
+$input-focus-box-shadow-color: rgba($primary, 0.25) !important;
+$input-background-color: $input-background !important;
+
+// $divider-background-color: $primary !important;
+$divider-color: $primary !important;

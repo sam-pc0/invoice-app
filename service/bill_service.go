@@ -11,6 +11,7 @@ type BillServie interface {
 	GetBillById(int) (model.Bill, error)
 	SaveBillBid(model.Owner, model.Bill, model.BidProposal, int) error
 	SaveBillInvoice(model.Owner, model.Bill, model.Invoice, []model.Item, int) error
+	GetBidBill(int) (model.BillJionBid, error)
 }
 
 type DefaultBillService struct {
@@ -39,4 +40,8 @@ func (s DefaultBillService) SaveBillBid(o model.Owner, bill model.Bill, bid mode
 
 func (s DefaultBillService) SaveBillInvoice(o model.Owner, b model.Bill, inv model.Invoice, it []model.Item, code int) error {
 	return s.R.UpdateBillAndCreateInvoice(o, b, inv, it, code)
+}
+
+func (s DefaultBillService) GetBidBill(id int) (model.BillJionBid, error) {
+	return s.R.GetBillContentByID(id)
 }
