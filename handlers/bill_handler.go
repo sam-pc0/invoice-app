@@ -65,6 +65,25 @@ func (h *BillHandler) GetBillByID(w http.ResponseWriter, r *http.Request) {
 	writeResponse(w, http.StatusOK, b)
 }
 
+func (h *BillHandler) GetBillBid(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		log.Println("[Handler Bill Error]", err, id)
+		writeResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	b, err := h.S.GetBidBill(id)
+	if err != nil {
+		log.Println("[Handler Bill Error]", err)
+		writeResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeResponse(w, http.StatusOK, b)
+}
+
 func (h *BillHandler) BillsCreate(w http.ResponseWriter, r *http.Request) {
 	var code int
 	c := r.URL.Query().Get("code")

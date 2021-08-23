@@ -39,7 +39,8 @@ func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
 func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	query := `SELECT id, 
 	name,
-	description
+	description,
+	template_code
 	FROM bills WHERE id = ?`
 
 	var b model.Bill
@@ -61,6 +62,28 @@ func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
 	if err != nil {
 		log.Println("[BillRepository Error]", err)
 		return nil, err
+	}
+
+	return b, nil
+}
+
+func (r *BillRepository) GetBillContentByID(id int) (model.BillJionBid, error) {
+	query := `SELECT 
+	template_code
+	FROM bills WHERE id = ?`
+
+	var code int
+	err := r.client.Get(&code, query, id)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return model.BillJionBid{}, err
+	}
+
+	dbBid := NewBidProposalRepository(r.client)
+	b, err := dbBid.GetBidAndBillByID(id)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return model.BillJionBid{}, err
 	}
 
 	return b, nil
