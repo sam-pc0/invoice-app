@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/canxega/invoice-app/model"
+	"github.com/canxega/invoice-app/repository/control"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -31,6 +32,18 @@ func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
 	if err != nil {
 		log.Println("[BillRepository Error]", err)
 		return 0, err
+	}
+
+	b.ID = lastId
+	switch b.TemplateCode {
+	case 1100:
+		bid := control.GenerateBidProposal()
+		_ = r.UpdateBillAndCreateBid(b.Owner, b, bid, b.TemplateCode)
+	case 1110:
+		inv := control.GenerateInvoice()
+		items := []model.Item{}
+		items = append(items, control.GenerateItem())
+		_ = r.UpdateBillAndCreateInvoice(b.Owner, b, inv, items, b.TemplateCode)
 	}
 
 	return lastId, nil
