@@ -3,14 +3,14 @@
     <div
       class="container is-flex is-justify-content-center is-align-items-center"
     >
-      <template v-if="invoiceData.templateId === templatesEnum.BID_PROPOSAL">
+      <template v-if="invoiceData.template_code === templatesEnum.BID_PROPOSAL">
         <BID-proposal
           @invoiceDataChange="handleInvoiceDataChange"
           :invoiceData="invoiceData"
         />
       </template>
 
-      <template v-if="invoiceData.templateId === templatesEnum.INVOICE">
+      <template v-if="invoiceData.template_code === templatesEnum.INVOICE">
         <invoice-template
           @invoiceDataChange="handleInvoiceDataChange"
           :invoiceData="invoiceData"
@@ -18,7 +18,7 @@
       </template>
 
       <template
-        v-if="invoiceData.templateId === templatesEnum.INVOICE_CONTRACT"
+        v-if="invoiceData.template_code === templatesEnum.INVOICE_CONTRACT"
       >
         <contract-invoice
           @invoiceDataChange="handleInvoiceDataChange"
@@ -27,7 +27,9 @@
       </template>
 
       <template
-        v-if="invoiceData.templateId === templatesEnum.DAILY_N_MATERIAL_RECORD"
+        v-if="
+          invoiceData.template_code === templatesEnum.DAILY_N_MATERIAL_RECORD
+        "
       >
         <materials-n-workers-record
           @invoiceDataChange="handleInvoiceDataChange"
@@ -68,8 +70,12 @@ export default {
   methods: {
     setInvoiceInfo() {
       const invoiceId = this.$route.params.invoiceId;
+      console.info(invoiceId);
       InvoiceService.get(invoiceId)
-        .then((invoiceData) => (this.invoiceData = invoiceData))
+        .then(({data}) => {
+          console.info(data);
+          this.invoiceData = data;
+        })
         .catch((error) => this.$toast.error(error));
     },
     handleInvoiceDataChange(invoiceData) {

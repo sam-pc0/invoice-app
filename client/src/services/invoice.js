@@ -4,20 +4,14 @@ import { URL } from "@/services/url";
 
 export default {
   create: async (invoiceData) => {
-    console.log(`${URL}/invoices`, invoiceData);
-    return axios.post(`${URL}/invoices`, invoiceData);
-    // invoiceData.id = 1;
-    // return invoiceData;
+    return axios.post(`${URL}/bills`, invoiceData);
   },
   getAll: async () => {
-    // return axios.get(`${URL}/invoices`);
-    return [];
+    return axios.get(`${URL}/bills`);
   },
   get: async (invoiceId) => {
-    console.log(invoiceId);
-    return axios.get(`${URL}/invoices`);
-    // console.info(MockService.generateInvoice(invoiceId));
-    // return MockService.generateInvoice(invoiceId);
+    console.info(`${URL}/bills/bill/${invoiceId}`);
+    return axios.get(`${URL}/bills/bill/${invoiceId}`);
   },
   update: (invoiceData) => {
     // return axios.put(`${URL}/invoices`, invoiceData);

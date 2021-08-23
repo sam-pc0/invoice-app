@@ -6,7 +6,7 @@ type Bill struct {
 	Description  string `json:"description"`
 	Owner        Owner  `json:"owner" db:"owner_id"`
 	LastEdit     string `json:"last_edit" db:"lastEdit"`
-	TemplateCode int    `json:"tempalte_code"`
+	TemplateCode int    `json:"template_code"`
 }
 
 type BillRequestGet struct {
