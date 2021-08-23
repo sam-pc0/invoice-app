@@ -82,51 +82,7 @@ export default {
   methods: {
     setInvoices() {
       InvoiceService.getAll()
-        .then((data) => {
-          data = [
-            {
-              id: "4",
-              name: "Testing",
-              description:
-                "A short description about the information in the invoice",
-              timeString: "11:09 PM - 11 Jul 2021",
-            },
-            {
-              id: "4",
-              name: "Testing 2",
-              description:
-                "A short description about the information in the invoice",
-              timeString: "11:09 PM - 11 Jul 2021",
-            },
-            {
-              id: "4",
-              name: "Testing 3",
-              description:
-                "A short description about the information in the invoice",
-              timeString: "11:09 PM - 11 Jul 2021",
-            },
-            {
-              id: "4",
-              name: "Testing 3",
-              description:
-                "A short description about the information in the invoice",
-              timeString: "11:09 PM - 11 Jul 2021",
-            },
-            {
-              id: "4",
-              name: "Testing 3",
-              description:
-                "A short description about the information in the invoice",
-              timeString: "11:09 PM - 11 Jul 2021",
-            },
-            {
-              id: "4",
-              name: "Testing 3",
-              description:
-                "A short description about the information in the invoice",
-              timeString: "11:09 PM - 11 Jul 2021",
-            },
-          ];
+        .then(({ data }) => {
           this.invoices = data;
         })
         .catch(() => this.$toast.error("An error occurred while get invoices"));
