@@ -22,13 +22,12 @@ type BillBid struct {
 	Template_code         int     `json:"template_code" db:"template_code"`
 	Name                  string  `json:"name" db:"name"`
 	Description           string  `json:"description" db:"description"`
-	Number                int     `json:"number" db:"number_bid"`
 	Owner                 Owner   `json:"owner" db:"owner"`
 	SpecificationStimates string  `json:"specificationstimates" db:"specifications_stimates"`
-	NotIncluded           string  `json:"not_included" db:"not_included"`
+	NotIncluded           string  `json:"notIncluded" db:"not_included"`
 	TotalSum              float32 `json:"totalsum" db:"totalSum"`
-	WithdrawnDays         int     `json:"withdrawndays" db:"withdrawn_days"`
-	WithdrawnDate         string  `json:"withdrawndate" db:"withdrawn_date"`
+	WithdrawnDays         int     `json:"withdrawnDays" db:"withdrawn_days"`
+	WithdrawnDate         string  `json:"withdrawnDate" db:"withdrawn_date"`
 	LastEdit              string  `db:"lastEdit"`
 }
 
@@ -40,13 +39,12 @@ type BillJionBid struct {
 	Template_code         int     `json:"template_code" db:"template_code"`
 	Name                  string  `json:"name" db:"name"`
 	Description           string  `json:"description" db:"description"`
-	Number                int     `json:"number" db:"number_bid"`
 	Owner                 Owner   `json:"owner" db:"owner"`
 	SpecificationStimates string  `json:"specificationstimates" db:"specifications_stimates"`
-	NotIncluded           string  `json:"not_included" db:"not_included"`
+	NotIncluded           string  `json:"notIncluded" db:"not_included"`
 	TotalSum              float32 `json:"totalsum" db:"totalSum"`
-	WithdrawnDays         int     `json:"withdrawndays" db:"withdrawn_days"`
-	WithdrawnDate         string  `json:"withdrawndate" db:"withdrawn_date"`
+	WithdrawnDays         int     `json:"withdrawnDays" db:"withdrawn_days"`
+	WithdrawnDate         string  `json:"withdrawnDate" db:"withdrawn_date"`
 	LastEdit              string  `json:"last_edit" db:"lastEdit"`
 }
 
@@ -55,11 +53,10 @@ type BillInvoice struct {
 	Template_code  int     `json:"template_code"`
 	Name           string  `json:"name"`
 	Description    string  `json:"description"`
-	Number         int     `json:"number"`
 	Owner          Owner   `json:"owner"`
 	Item           []Item  `json:"item" db:"item_id"`
 	Total          float32 `json:"total"`
-	DateSubmmitted string  `json:"date_submmitted"`
+	DateSubmmitted string  `json:"dateSubmitted"`
 }
 
 // BillJoinInvoice La estructura que se espera
@@ -70,10 +67,9 @@ type BillJoinInvoice struct {
 	Template_code  int     `json:"template_code" db:"template_code"`
 	Name           string  `json:"name"`
 	Description    string  `json:"description"`
-	Number         int     `json:"number" db:"number_inv"`
 	Owner          Owner   `json:"owner"`
 	Item           []Item  `json:"item" db:"item"`
 	Total          float32 `json:"total"`
-	DateSubmmitted string  `json:"date_submmitted" db:"date_submmitted"`
+	DateSubmmitted string  `json:"dateSubmitted" db:"date_submmitted"`
 	LastEdit       string  `json:"last_edit" db:"lastEdit"`
 }

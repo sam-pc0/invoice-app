@@ -17,10 +17,10 @@ func NewBillRepository(db *sqlx.DB) BillRepository {
 }
 
 func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
-	query := `INSERT INTO bills (name, description, template_code) VALUES (?, ?, ?)`
+	query := `INSERT INTO bills (name, description, template_code, lastEdit) VALUES (?, ?, ?, ?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.Name, b.Description, b.TemplateCode)
+	tx.MustExec(query, b.Name, b.Description, b.TemplateCode, b.LastEdit)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BillRepository Error]", err)
 		tx.Rollback()
