@@ -27,6 +27,7 @@ export const templatesEnum = {
 
 export class Owner {
   constructor({
+    id,
     name,
     address,
     location,
@@ -35,6 +36,7 @@ export class Owner {
     projectNameNAddress,
     email,
   }) {
+    this.id = id;
     this.name = name;
     this.address = address;
     this.location = location;
@@ -48,7 +50,8 @@ export class Owner {
 export class BIDProposal {
   constructor({
     id,
-    templateId,
+    id_bid,
+    templateCode,
     name,
     description,
     number,
@@ -60,7 +63,8 @@ export class BIDProposal {
     withdrawnDate,
   }) {
     this.id = id;
-    this.templateId = templateId;
+    this.id_bid = id_bid;
+    this.templateCode = templateCode;
     this.name = name;
     this.description = description;
     this.number = number;
@@ -74,28 +78,47 @@ export class BIDProposal {
 }
 
 export class Item {
-  constructor(item, description, amount) {
-    this.item = item;
+  constructor({ name, description, amount }) {
+    this.name = name;
     this.description = description;
-    this.amount = amount;
+    this.amount = Number(amount);
+  }
+}
+
+export class ItemList {
+  constructor(itemsList) {
+    let returnedList = [];
+    itemsList.forEach((item) => {
+      returnedList.push(new Item(item));
+    });
+    return returnedList;
   }
 }
 
 export class Invoice {
   constructor({
     id,
-    templateId,
+    invoice_id,
+    template_code,
+    last_edit,
+    name,
+    description,
     number,
     owner,
-    itemsList,
+    item,
     total,
     dateSubmitted,
   }) {
+    console.info(number);
     this.id = id;
-    this.templateId = templateId;
+    last_edit = last_edit,
+    this.invoice_id = invoice_id;
+    this.template_code = template_code;
+    this.name = name;
+    this.description = description;
     this.number = number;
-    this.owner = owner;
-    this.itemsList = itemsList;
+    this.owner = new Owner(owner);
+    this.item = new ItemList(item);
     this.total = total;
     this.dateSubmitted = dateSubmitted;
   }
@@ -104,7 +127,7 @@ export class Invoice {
 export class ContractInvoice {
   constructor({
     id,
-    templateId,
+    templateCode,
     number,
     owner,
     itemsList,
@@ -113,7 +136,7 @@ export class ContractInvoice {
     originalContractAmount,
   }) {
     this.id = id;
-    this.templateId = templateId;
+    this.templateCode = templateCode;
     this.number = number;
     this.owner = owner;
     this.itemsList = itemsList;
@@ -152,7 +175,7 @@ export class MaterialsNWorkersItem {
 export class MaterialsNWorkers {
   constructor({
     id,
-    templateId,
+    templateCode,
     number,
     owner,
     materialNworkersList,
@@ -163,7 +186,7 @@ export class MaterialsNWorkers {
     dateSubmitted,
   }) {
     this.id = id;
-    this.templateId = templateId;
+    this.templateCode = templateCode;
     this.number = number;
     this.owner = owner;
     this.materialNworkersList = materialNworkersList;

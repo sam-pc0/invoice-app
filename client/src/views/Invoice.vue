@@ -70,15 +70,15 @@ export default {
   methods: {
     setInvoiceInfo() {
       const invoiceId = this.$route.params.invoiceId;
-      console.info(invoiceId);
       InvoiceService.get(invoiceId)
-        .then(({data}) => {
+        .then((data) => {
           console.info(data);
           this.invoiceData = data;
         })
         .catch((error) => this.$toast.error(error));
     },
     handleInvoiceDataChange(invoiceData) {
+      console.info(invoiceData);
       this.invoiceData = invoiceData;
     },
   },

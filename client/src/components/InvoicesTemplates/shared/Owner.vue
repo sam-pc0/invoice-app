@@ -38,6 +38,7 @@
             v-model="owner.altPhone"
             class="input is-small"
             label="Owner's Alt. Phone"
+            placeholder="Owner's Alt Phone"
           />
         </div>
       </div>

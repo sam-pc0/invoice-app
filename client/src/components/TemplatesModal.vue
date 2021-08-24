@@ -103,6 +103,7 @@ export default {
         template_code: this.selectedTemplate,
         name: this.invoiceName,
         description: this.description,
+        last_edit: new Date(),
       };
       console.info(invoiceData);
       InvoiceService.create(invoiceData)
