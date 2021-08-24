@@ -16,11 +16,11 @@ func NewItemRepository(db *sqlx.DB) ItemRepository {
 }
 
 func (r *ItemRepository) SaveItem(item model.Item) (int, error) {
-	query := `INSERT INTO items (description, amount)
-	VALUES (?,?)`
+	query := `INSERT INTO items (description, amount, item)
+	VALUES (?,?,?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, item.Description, item.Amount)
+	tx.MustExec(query, item.Description, item.Amount, item.Item)
 	if err := tx.Commit(); err != nil {
 		log.Println("[ItemRepository Error]", err)
 		tx.Rollback()
@@ -56,10 +56,11 @@ func (r *ItemRepository) SaveItemInvoice(itemID, invoiceID int) error {
 func (r *ItemRepository) UpdateItem(i model.Item, id int) error {
 	query := `UPDATE items SET
 	description = ?,
-	amount = ?
+	amount = ?,
+	item =?
 	WHERE id = ?`
 	tx := r.client.MustBegin()
-	tx.MustExec(query, i.Description, i.Amount, id)
+	tx.MustExec(query, i.Description, i.Amount, i.Item, id)
 	if err := tx.Commit(); err != nil {
 		log.Println("[ItemRepository Error]", err)
 		tx.Rollback()

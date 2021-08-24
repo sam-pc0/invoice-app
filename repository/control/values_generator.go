@@ -4,6 +4,7 @@ import "github.com/canxega/invoice-app/model"
 
 func GenerateItem() model.Item {
 	return model.Item{
+		Item:        "",
 		Amount:      0.0,
 		Description: "",
 	}
@@ -11,7 +12,6 @@ func GenerateItem() model.Item {
 
 func GenerateInvoice() model.Invoice {
 	return model.Invoice{
-		Number:         0,
 		Total:          0.0,
 		DateSubmmitted: "",
 	}
@@ -19,7 +19,6 @@ func GenerateInvoice() model.Invoice {
 
 func GenerateBidProposal() model.BidProposal {
 	return model.BidProposal{
-		Number:                0,
 		SpecificationStimates: "",
 		NotIncluded:           "",
 		TotalSum:              0,

@@ -121,7 +121,6 @@ func (h *BillHandler) BillUpdateContent(w http.ResponseWriter, r *http.Request) 
 		it := b.Item
 		in := model.Invoice{
 			ID:             b.InvoiceID,
-			Number:         b.Number,
 			Total:          b.Total,
 			DateSubmmitted: b.DateSubmmitted,
 		}
@@ -158,7 +157,6 @@ func (h *BillHandler) BillUpdateContent(w http.ResponseWriter, r *http.Request) 
 		}
 		bid := model.BidProposal{
 			ID:                    b.ID_BID,
-			Number:                b.Number,
 			SpecificationStimates: b.SpecificationStimates,
 			NotIncluded:           b.NotIncluded,
 			TotalSum:              b.TotalSum,
@@ -200,7 +198,6 @@ func (h *BillHandler) BillsCreate(w http.ResponseWriter, r *http.Request) {
 		}
 		var o model.Owner
 		bid := model.BidProposal{
-			Number:                billBid.Number,
 			SpecificationStimates: billBid.SpecificationStimates,
 			NotIncluded:           billBid.NotIncluded,
 			TotalSum:              billBid.TotalSum,
@@ -233,7 +230,6 @@ func (h *BillHandler) BillsCreate(w http.ResponseWriter, r *http.Request) {
 		}
 		o := billInvoice.Owner
 		invoice := model.Invoice{
-			Number:         billInvoice.Number,
 			Total:          billInvoice.Total,
 			DateSubmmitted: billInvoice.DateSubmmitted,
 		}

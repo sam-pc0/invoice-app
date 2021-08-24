@@ -2,10 +2,9 @@ package model
 
 type BidProposal struct {
 	ID                    int     `json:"id"`
-	Number                int     `json:"number"`
 	SpecificationStimates string  `json:"specificationstimates"`
-	NotIncluded           string  `json:"not_included"`
+	NotIncluded           string  `json:"notIncluded"`
 	TotalSum              float32 `json:"totalsum"`
-	WithdrawnDays         int     `json:"withdrawndays"`
-	WithdrawnDate         string  `json:"withdrawndate"`
+	WithdrawnDays         int     `json:"withdrawnDays"`
+	WithdrawnDate         string  `json:"withdrawnDate"`
 }

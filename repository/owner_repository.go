@@ -16,11 +16,11 @@ func NewOwnerRepository(db *sqlx.DB) OwnerRepository {
 }
 
 func (r *OwnerRepository) SaveOwner(o model.Owner) (int, error) {
-	query := `INSERT INTO owner(name, location, phone, altPhone, projectNameAddress, email)
-	VALUES (?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO owner(name, location, phone, altPhone, projectNameAddress, email, address)
+	VALUES (?, ?, ?, ?, ?, ?, ?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, o.Name, o.Location, o.Phone, o.AltPhone, o.ProjectNameAddress, o.Email)
+	tx.MustExec(query, o.Name, o.Location, o.Phone, o.AltPhone, o.ProjectNameAddress, o.Email, o.Address)
 	if err := tx.Commit(); err != nil {
 		log.Println("[OwnerRepository Error]", err)
 		tx.Rollback()
@@ -57,11 +57,12 @@ func (r *OwnerRepository) UpdateOwner(o model.Owner, id int) error {
 	phone = ?,
 	altPhone = ?,
 	projectNameAddress = ?,
-	email = ?
+	email = ?,
+	address = ?
 	WHERE id=?`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, o.Name, o.Location, o.Phone, o.AltPhone, o.ProjectNameAddress, o.Email, id)
+	tx.MustExec(query, o.Name, o.Location, o.Phone, o.AltPhone, o.ProjectNameAddress, o.Email, o.Address, id)
 	if err := tx.Commit(); err != nil {
 		log.Println("[OwnerRepository Error]", err)
 		tx.Rollback()
