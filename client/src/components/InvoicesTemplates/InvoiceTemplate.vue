@@ -104,6 +104,7 @@ export default {
             .then(() => {
               this.isSavedClicked = false;
               console.info(this.invoice);
+              this.$toast.success("Document were saved");
               this.$router.replace("/invoices");
             })
             .catch((error) => this.$toast.error(error));
