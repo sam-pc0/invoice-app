@@ -98,26 +98,22 @@ export class ItemList {
 export class Invoice {
   constructor({
     id,
-    invoice_id,
     template_code,
     last_edit,
     name,
     description,
-    number,
     owner,
-    item,
+    items,
     total,
     dateSubmitted,
   }) {
     this.id = id;
     this.last_edit = new Date(last_edit);
-    this.invoice_id = invoice_id;
     this.template_code = template_code;
     this.name = name;
     this.description = description;
-    this.number = number;
     this.owner = new Owner(owner);
-    this.item = new ItemList(item);
+    this.items = new ItemList(items);
     this.total = total;
     this.dateSubmitted = new Date(dateSubmitted);
   }

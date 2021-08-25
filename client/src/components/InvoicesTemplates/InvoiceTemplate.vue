@@ -11,7 +11,7 @@
       @downladClicked="handleDownload"
     />
     <section v-animate-css="animatedObject" class="invoice">
-      <invoice-header invoiceType="Invoice" :number="invoice.number" />
+      <invoice-header invoiceType="Invoice" :number="invoice.id" />
       <owner
         @onSave="handleOwnerChange"
         :invoiceOwner="invoice.owner"
@@ -19,7 +19,7 @@
       />
       <ItemList
         @onSave="handleItemsListChange"
-        :itemList="invoice.item"
+        :itemList="invoice.items"
         :isSavedClicked="isSavedClicked"
       />
       <section class="mt-4">

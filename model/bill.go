@@ -54,7 +54,7 @@ type BillInvoice struct {
 	Name           string  `json:"name"`
 	Description    string  `json:"description"`
 	Owner          Owner   `json:"owner"`
-	Item           []Item  `json:"item" db:"item_id"`
+	Item           []Item  `json:"item"`
 	Total          float32 `json:"total"`
 	DateSubmmitted string  `json:"dateSubmitted"`
 }
@@ -62,13 +62,12 @@ type BillInvoice struct {
 // BillJoinInvoice La estructura que se espera
 // sea devuelta para hacer el update
 type BillJoinInvoice struct {
-	ID             int     `json:"id" db:"id_bill"`
-	InvoiceID      int     `json:"invoice_id" db:"invoice_id"`
+	ID             int     `json:"id" db:"id"`
 	Template_code  int     `json:"template_code" db:"template_code"`
 	Name           string  `json:"name"`
 	Description    string  `json:"description"`
 	Owner          Owner   `json:"owner"`
-	Item           []Item  `json:"item" db:"item"`
+	Items          []Item  `json:"items" db:"item"`
 	Total          float32 `json:"total"`
 	DateSubmmitted string  `json:"dateSubmitted" db:"date_submmitted"`
 	LastEdit       string  `json:"last_edit" db:"lastEdit"`

@@ -39,37 +39,44 @@ func (r *InvoiceRepository) SaveInvoice(invoice model.Invoice, id int) (int, err
 }
 
 func (r *InvoiceRepository) GetInvoiceAndBillByID(id int) (model.BillJoinInvoice, error) {
-	query := `SELECT bills.id "id_bill",bills.template_code,
-	bills.name , bills.description, bills.lastEdit,
-	owner.id "owner.id", owner.name "owner.name", owner.location "owner.location", owner.phone "owner.phone", 
-	owner.altPhone "owner.altPhone", owner.projectNameAddress "owner.projectNameAddress", owner.address "owner.address", owner.email "owner.email",
-	invoices.id "invoice_id", invoices.total, invoices.dateSubmmitted "date_submmitted"
-	FROM bills  INNER JOIN owner  
-	ON bills.owner_id = owner.id
-	INNER JOIN invoices  ON invoices.id_bill = bills.id 
-	INNER JOIN item_invoice  ON item_invoice.invoice_item = invoices.id 
-	INNER JOIN items  ON items.id  = item_invoice.item_id 
-	WHERE bills.id =?`
+	query := `
+  SELECT
+		bills.id,
+		bills.template_code,
+		bills.name, 
+		bills.description, 
+		bills.lastEdit,
+		owner.name "owner.name",
+		owner.location "owner.location", 
+		owner.phone "owner.phone", 
+		owner.altPhone "owner.altPhone",
+		owner.projectNameAddress "owner.projectNameAddress",
+		owner.address "owner.address",
+		owner.email "owner.email",
+		invoices.total,
+		invoices.dateSubmmitted "date_submmitted"
+	FROM bills
+	JOIN owner ON bills.owner_id = owner.id
+	JOIN invoices ON invoices.id_bill = bills.id 
+	AND bills.id =?`
 
 	var b model.BillJoinInvoice
 	err := r.client.Get(&b, query, id)
 	if err != nil {
 		return model.BillJoinInvoice{}, err
 	}
-
 	i, _ := r.GetItemsByll(id)
-	b.Item = i
+	b.Items = i
 
 	return b, nil
 }
 
 func (r *InvoiceRepository) GetItemsByll(id int) ([]model.Item, error) {
-	query := `SELECT
-	items.id "id", items.description "description", items.amount "amount", items.item
-	FROM items INNER JOIN item_invoice ON item_invoice.item_id = items.id
-	INNER JOIN invoices ON item_invoice.invoice_item = invoices.id
-	INNER JOIN bills ON bills.id = invoices.id_bill
-	WHERE bills.id = ?`
+	 query := `
+		select items.item, items.amount, items.description 
+	 	from items 
+		join item_invoice ii on items.id = ii.item_id
+		and ii.invoice_item =?`
 	i := []model.Item{}
 	err := r.client.Select(&i, query, id)
 	if err != nil {

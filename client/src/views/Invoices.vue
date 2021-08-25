@@ -54,7 +54,7 @@
               >Edit</b-button
             >
             <b-button
-              @click="handleDeleteInvoice"
+              @click="handleDeleteInvoice(invoice.id)"
               class="is-ghost card-footer-item has-text-danger"
               >Delete</b-button
             >

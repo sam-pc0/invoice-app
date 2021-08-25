@@ -39,9 +39,6 @@ export default {
     return axios.put(`${URL}/bills/bill/${invoiceData.id}`, invoiceData);
   },
   delete: (invoiceId) => {
-    //     return axios.delete(`${URL}/invoices`, {
-    // data: { id_Product },
-    // });
-    return invoiceId;
+    return axios.delete(`${URL}/bills/bill/${invoiceId}/`);
   },
 };

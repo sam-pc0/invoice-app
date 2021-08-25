@@ -30,7 +30,7 @@ func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
 	return b, nil
 }
 
-func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
+func (r *BillRepository) CreateBill(b model.Bill) (int, error) {
 	query := `INSERT INTO bills (name, description, template_code, lastEdit) VALUES (?, ?, ?, ?)`
 
 	tx := r.client.MustBegin()
@@ -61,6 +61,38 @@ func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
 	return lastId, nil
 }
 
+func (r *BillRepository) DeleteInvoiceById(id int) (error) {
+	deleteItemsQuery := `delete i, i2
+        from item_invoice i
+        join items i2 on i.item_id = i2.id
+        and i.invoice_item =?`
+	
+	deleteBillQuery := `delete i.*, o.*, b.*
+	 	from invoices i
+	 	join bills b on b.id = i.id_bill
+	 	join owner o on b.owner_id = o.id
+	 	and b.id = ?`
+	
+	tx := r.client.MustBegin()
+	tx.MustExec(deleteItemsQuery, id)
+	if err := tx.Commit(); err != nil {
+		log.Println("[BillRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+
+	tx2 := r.client.MustBegin()
+	tx2.MustExec(deleteBillQuery, id)
+	if err := tx2.Commit(); err != nil {
+		log.Println("[BillRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+	
+
+	return nil
+}
+
 func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	query := `SELECT id, 
 	name,
@@ -78,7 +110,21 @@ func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	return b, nil
 }
 
+func (r *BillRepository) GetBillContentByID(id int) (model.BillJionBid, error) {
+	dbBid := NewBidProposalRepository(r.client)
+	b, err := dbBid.GetBidAndBillByID(id)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return model.BillJionBid{}, err
+	}
+
+	return b, nil
+}
+
+
+
 func (r *BillRepository) UpdateBill(b model.Bill, id int) error {
+	log.Print("is here")
 	query := `UPDATE bills SET
 	name = ?,
 	description = ?,
@@ -96,16 +142,7 @@ func (r *BillRepository) UpdateBill(b model.Bill, id int) error {
 	return nil
 }
 
-func (r *BillRepository) GetBillContentByID(id int) (model.BillJionBid, error) {
-	dbBid := NewBidProposalRepository(r.client)
-	b, err := dbBid.GetBidAndBillByID(id)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return model.BillJionBid{}, err
-	}
 
-	return b, nil
-}
 
 func (r *BillRepository) GetBillInvoiceContentByID(id int) (model.BillJoinInvoice, error) {
 	dbInv := NewInvoiceRepository(r.client)

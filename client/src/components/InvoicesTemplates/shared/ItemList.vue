@@ -68,9 +68,11 @@ export default {
   },
   computed: {
     totalInvoice() {
-      return this.list
-        .map((item) => Number(item.amount))
-        .reduce((total, amount) => total + amount);
+      return this.list.length > 0
+        ? this.list
+            .map((item) => Number(item.amount))
+            .reduce((total, amount) => total + amount)
+        : 0;
     },
   },
   data() {

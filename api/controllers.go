@@ -16,12 +16,11 @@ var (
 func Controllers() *mux.Router {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
-	router.HandleFunc("/bills", billHandler.GetBills).Methods("GET")
-	router.HandleFunc("/bills", billHandler.NewBillBasic).Methods("POST")
-	router.HandleFunc("/bills/bill/{id}", billHandler.GetBillContent).Methods("GET")
-	router.HandleFunc("/bills/bill/{id}", billHandler.BillUpdateContent).Methods("PUT")
-	router.HandleFunc("/bills", billHandler.BillsCreate).Methods("PUT")
-
+	router.HandleFunc("/login", handlers.LoginHandler).Methods("POST") //login
+	router.HandleFunc("/bills", billHandler.GetBills).Methods("GET") // get all invoices
+	router.HandleFunc("/bills", billHandler.CreateBill).Methods("POST") // create invoice
+	router.HandleFunc("/bills/bill/{id}/", billHandler.DeleteBill).Methods("DELETE") //delete invoice
+	router.HandleFunc("/bills/bill/{id}", billHandler.GetBillById).Methods("GET") // get by id
+	router.HandleFunc("/bills/bill/{id}", billHandler.BillUpdateContent).Methods("PUT") // update
 	return router
 }

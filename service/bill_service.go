@@ -7,7 +7,9 @@ import (
 
 type BillServie interface {
 	GetAllBillS() ([]model.BillRequestGet, error)
-	SaveBasicBill(model.Bill) (int, error)
+	CreateBill(model.Bill) (int, error)
+	DeleteBidById(int) (error)
+	DeleteInvoiceById(int) (error)
 	GetBillById(int) (model.Bill, error)
 	SaveBillBid(model.Owner, model.Bill, model.BidProposal, int) error
 	SaveBillInvoice(model.Owner, model.Bill, model.Invoice, []model.Item, int) error
@@ -30,12 +32,24 @@ func (s DefaultBillService) GetAllBillS() ([]model.BillRequestGet, error) {
 	return s.R.GetAllBills()
 }
 
-func (s DefaultBillService) SaveBasicBill(b model.Bill) (int, error) {
-	return s.R.InsertContent(b)
+func (s DefaultBillService) CreateBill(b model.Bill) (int, error) {
+	return s.R.CreateBill(b)
+}
+
+func (s DefaultBillService) DeleteBidById(id int) (error) {
+	return s.R.DeleteInvoiceById(id)
+}
+
+func (s DefaultBillService) DeleteInvoiceById(id int) (error) {
+	return s.R.DeleteInvoiceById(id)
 }
 
 func (s DefaultBillService) GetBillById(id int) (model.Bill, error) {
 	return s.R.GetBillByID(id)
+}
+
+func (s DefaultBillService) GetInvoiceBill(id int) (model.BillJoinInvoice, error) {
+	return s.R.GetBillInvoiceContentByID(id)
 }
 
 func (s DefaultBillService) SaveBillBid(o model.Owner, bill model.Bill, bid model.BidProposal, code int) error {
@@ -48,10 +62,6 @@ func (s DefaultBillService) SaveBillInvoice(o model.Owner, b model.Bill, inv mod
 
 func (s DefaultBillService) GetBidBill(id int) (model.BillJionBid, error) {
 	return s.R.GetBillContentByID(id)
-}
-
-func (s DefaultBillService) GetInvoiceBill(id int) (model.BillJoinInvoice, error) {
-	return s.R.GetBillInvoiceContentByID(id)
 }
 
 func (s DefaultBillService) VerifyCode(id int) (int, error) {
