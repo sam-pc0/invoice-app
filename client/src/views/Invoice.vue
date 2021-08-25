@@ -3,6 +3,7 @@
     <div
       class="container is-flex is-justify-content-center is-align-items-center"
     >
+      <b-loading v-model="loading" />
       <template v-if="invoiceData.template_code === templatesEnum.BID_PROPOSAL">
         <BID-proposal
           @invoiceDataChange="handleInvoiceDataChange"
@@ -18,7 +19,7 @@
       </template>
 
       <template
-        v-if="invoiceData.template_code === templatesEnum.INVOICE_CONTRACT"
+        v-if="invoiceData.template_code === templatesEnum.CONTRACT_INVOICE"
       >
         <contract-invoice
           @invoiceDataChange="handleInvoiceDataChange"
@@ -65,6 +66,7 @@ export default {
     return {
       invoiceData: {},
       templatesEnum,
+      loading: true,
     };
   },
   methods: {
@@ -72,8 +74,8 @@ export default {
       const invoiceId = this.$route.params.invoiceId;
       InvoiceService.get(invoiceId)
         .then((data) => {
-          console.info(data);
           this.invoiceData = data;
+          this.loading = false;
         })
         .catch((error) => this.$toast.error(error));
     },

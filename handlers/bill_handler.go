@@ -130,7 +130,7 @@ func (h *BillHandler) GetBillContent(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h *BillHandler) BillUpdateContent(w http.ResponseWriter, r *http.Request) {
+func (h *BillHandler) SaveBill(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {

@@ -37,7 +37,7 @@ func (s DefaultBillService) CreateBill(b model.Bill) (int, error) {
 }
 
 func (s DefaultBillService) DeleteBidById(id int) (error) {
-	return s.R.DeleteInvoiceById(id)
+	return s.R.DeleteBidById(id)
 }
 
 func (s DefaultBillService) DeleteInvoiceById(id int) (error) {

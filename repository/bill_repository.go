@@ -61,6 +61,25 @@ func (r *BillRepository) CreateBill(b model.Bill) (int, error) {
 	return lastId, nil
 }
 
+
+func (r *BillRepository) DeleteBidById(id int) (error) {
+	query := `delete bid.*, o.*, b.*
+	 	from bid_proposal bid
+	 	join bills b on b.id = bid.id_bill
+	 	join owner o on b.owner_id = o.id
+	 	and b.id =?`
+	
+	tx := r.client.MustBegin()
+	tx.MustExec(query, id)
+	if err := tx.Commit(); err != nil {
+		log.Println("[BillRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+
+	return nil
+}
+
 func (r *BillRepository) DeleteInvoiceById(id int) (error) {
 	deleteItemsQuery := `delete i, i2
         from item_invoice i

@@ -115,7 +115,8 @@ export class Invoice {
     this.owner = new Owner(owner);
     this.items = new ItemList(items);
     this.total = total;
-    this.dateSubmitted = new Date(dateSubmitted);
+    this.dateSubmitted =
+      dateSubmitted !== "" ? new Date(dateSubmitted) : new Date();
   }
 }
 

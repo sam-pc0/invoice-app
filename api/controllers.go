@@ -21,6 +21,6 @@ func Controllers() *mux.Router {
 	router.HandleFunc("/bills", billHandler.CreateBill).Methods("POST") // create invoice
 	router.HandleFunc("/bills/bill/{id}/", billHandler.DeleteBill).Methods("DELETE") //delete invoice
 	router.HandleFunc("/bills/bill/{id}", billHandler.GetBillById).Methods("GET") // get by id
-	router.HandleFunc("/bills/bill/{id}", billHandler.BillUpdateContent).Methods("PUT") // update
+	router.HandleFunc("/bills/bill/{id}", billHandler.SaveBill).Methods("PUT") // update
 	return router
 }

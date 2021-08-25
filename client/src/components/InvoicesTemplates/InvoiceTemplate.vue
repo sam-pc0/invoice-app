@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     handleDownload() {
-      !this.isSavedClicke && this.handleSave();
+      !this.isSavedClicked && this.handleSave();
     },
     handleSave() {
       if (!this.isSavedClicked) {
@@ -103,7 +103,8 @@ export default {
           InvoiceService.update(this.invoice)
             .then(() => {
               this.isSavedClicked = false;
-              //    this.$router.replace("/invoices");
+              console.info(this.invoice);
+              this.$router.replace("/invoices");
             })
             .catch((error) => this.$toast.error(error));
         }, 100);
@@ -115,7 +116,7 @@ export default {
       this.invoice.last_edit = new Date();
     },
     handleItemsListChange({ item, total }) {
-      this.invoice.item = item;
+      this.invoice.items = item;
       this.invoice.total = total;
     },
     handleOwnerChange(owner) {
