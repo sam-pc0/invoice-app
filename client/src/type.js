@@ -78,8 +78,8 @@ export class BIDProposal {
 }
 
 export class Item {
-  constructor({ name, description, amount }) {
-    this.name = name;
+  constructor({ item, description, amount }) {
+    this.item = item;
     this.description = description;
     this.amount = Number(amount);
   }
@@ -109,9 +109,8 @@ export class Invoice {
     total,
     dateSubmitted,
   }) {
-    console.info(number);
     this.id = id;
-    last_edit = last_edit,
+    this.last_edit = new Date(last_edit);
     this.invoice_id = invoice_id;
     this.template_code = template_code;
     this.name = name;
@@ -120,7 +119,7 @@ export class Invoice {
     this.owner = new Owner(owner);
     this.item = new ItemList(item);
     this.total = total;
-    this.dateSubmitted = dateSubmitted;
+    this.dateSubmitted = new Date(dateSubmitted);
   }
 }
 

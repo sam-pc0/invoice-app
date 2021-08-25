@@ -11,22 +11,16 @@ import (
 var (
 	client       = db.NewSqlClient()
 	billHandler  = handlers.BillHandler{S: service.NewBillService(repository.NewBillRepository(client.DB))}
-	ownerHandler = handlers.OwnerHandler{S: service.NewOwnerService(repository.NewOwnerRepository(client.DB))}
 )
 
 func Controllers() *mux.Router {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/bills", billHandler.NewBillBasic).Methods("POST")
-	router.HandleFunc("/owners", ownerHandler.CreatOwner).Methods("POST")
 	router.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
-
 	router.HandleFunc("/bills", billHandler.GetBills).Methods("GET")
-	router.HandleFunc("/bills/{id}", billHandler.GetBillByID).Methods("GET")
+	router.HandleFunc("/bills", billHandler.NewBillBasic).Methods("POST")
 	router.HandleFunc("/bills/bill/{id}", billHandler.GetBillContent).Methods("GET")
 	router.HandleFunc("/bills/bill/{id}", billHandler.BillUpdateContent).Methods("PUT")
-	router.HandleFunc("/owners/{id}", ownerHandler.GetOwnerByID).Methods("GET")
-
 	router.HandleFunc("/bills", billHandler.BillsCreate).Methods("PUT")
 
 	return router

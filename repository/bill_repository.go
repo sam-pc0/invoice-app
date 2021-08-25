@@ -16,6 +16,20 @@ func NewBillRepository(db *sqlx.DB) BillRepository {
 	return BillRepository{db}
 }
 
+func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
+	query := `SELECT id,name,description,template_code,lastEdit
+	FROM bills`
+
+	var b []model.BillRequestGet
+	err := r.client.Select(&b, query)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return nil, err
+	}
+
+	return b, nil
+}
+
 func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
 	query := `INSERT INTO bills (name, description, template_code, lastEdit) VALUES (?, ?, ?, ?)`
 
@@ -36,14 +50,12 @@ func (r *BillRepository) InsertContent(b model.Bill) (int, error) {
 
 	b.ID = lastId
 	switch b.TemplateCode {
+	case 1110:
+		inv := control.GenerateInvoice()
+		r.UpdateBillAndCreateInvoice(b.Owner, b, inv, b.TemplateCode)
 	case 1100:
 		bid := control.GenerateBidProposal()
 		_ = r.UpdateBillAndCreateBid(b.Owner, b, bid, b.TemplateCode)
-	case 1110:
-		inv := control.GenerateInvoice()
-		items := []model.Item{}
-		items = append(items, control.GenerateItem())
-		_ = r.UpdateBillAndCreateInvoice(b.Owner, b, inv, items, b.TemplateCode)
 	}
 
 	return lastId, nil
@@ -61,20 +73,6 @@ func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	if err != nil {
 		log.Println("[BillRepository Error]", err)
 		return model.Bill{}, err
-	}
-
-	return b, nil
-}
-
-func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
-	query := `SELECT id,name,description,template_code
-	FROM bills`
-
-	var b []model.BillRequestGet
-	err := r.client.Select(&b, query)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return nil, err
 	}
 
 	return b, nil
@@ -218,7 +216,7 @@ func (r *BillRepository) UpdateBillAndCreateBid(owner model.Owner, bill model.Bi
 	return nil
 }
 
-func (r *BillRepository) UpdateBillAndCreateInvoice(owner model.Owner, bil model.Bill, invoice model.Invoice, items []model.Item, code int) error {
+func (r *BillRepository) UpdateBillAndCreateInvoice(owner model.Owner, bil model.Bill, invoice model.Invoice, code int) error {
 	id, err := saveOwnerBill(r.client, owner)
 	if err != nil {
 		log.Println("[BillRepository Error]", err)
@@ -231,25 +229,14 @@ func (r *BillRepository) UpdateBillAndCreateInvoice(owner model.Owner, bil model
 		return err
 	}
 
-	save := NewInvoiceRepository(r.client)
-	idInvoice, err := save.SaveInvoice(invoice, bil.ID)
+	invoiceService := NewInvoiceRepository(r.client)
+	invoiceId, err := invoiceService.SaveInvoice(invoice, bil.ID)
 	if err != nil {
 		log.Println("[BillRepository Error]", err)
 		return err
 	}
 
-	dbItem := NewItemRepository(r.client)
-	for _, i := range items {
-		idItem, err := dbItem.SaveItem(i)
-		if err != nil {
-			log.Println("[BillRepository Error]", err)
-			return err
-		}
-		if err := dbItem.SaveItemInvoice(idItem, idInvoice); err != nil {
-			log.Println("[BillRepository Error]", err)
-			return err
-		}
-	}
+	log.Print(invoiceId)
 
 	return nil
 }

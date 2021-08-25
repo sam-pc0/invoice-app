@@ -15,6 +15,17 @@ type BillHandler struct {
 	S service.BillServie
 }
 
+func (h *BillHandler) GetBills(w http.ResponseWriter, r *http.Request) {
+	b, err := h.S.GetAllBillS()
+	if err != nil {
+		log.Println("[Handler Bill Error]", err)
+		writeResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeResponse(w, http.StatusOK, b)
+}
+
 func (h *BillHandler) NewBillBasic(w http.ResponseWriter, r *http.Request) {
 	var b model.Bill
 
@@ -33,17 +44,6 @@ func (h *BillHandler) NewBillBasic(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeResponse(w, http.StatusCreated, id)
-}
-
-func (h *BillHandler) GetBills(w http.ResponseWriter, r *http.Request) {
-	b, err := h.S.GetAllBillS()
-	if err != nil {
-		log.Println("[Handler Bill Error]", err)
-		writeResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	writeResponse(w, http.StatusOK, b)
 }
 
 func (h *BillHandler) GetBillByID(w http.ResponseWriter, r *http.Request) {

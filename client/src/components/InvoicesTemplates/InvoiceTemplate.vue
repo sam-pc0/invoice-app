@@ -103,7 +103,7 @@ export default {
           InvoiceService.update(this.invoice)
             .then(() => {
               this.isSavedClicked = false;
-              this.$router.replace("/invoices");
+              //    this.$router.replace("/invoices");
             })
             .catch((error) => this.$toast.error(error));
         }, 100);

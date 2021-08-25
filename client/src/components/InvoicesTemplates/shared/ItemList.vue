@@ -3,7 +3,7 @@
     <template v-if="list.length > 0">
       <div class="item" v-for="(item, i) in list" :key="i">
         <input
-          v-model="item.name"
+          v-model="item.item"
           class="item__name input is-small is-inline"
           placeholder="Item"
         />

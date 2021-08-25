@@ -12,13 +12,13 @@ type Login struct {
 	Password string `json:"password"`
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+func LoginHandler(w http.ResponseWriter, request *http.Request) {
 	c := db.NewSqlClient()
 	var l Login
-	_ = json.NewDecoder(r.Body).Decode(&l)
+	_ = json.NewDecoder(request.Body).Decode(&l)
 
 	var login Login
-	c.Get(&login, "SELEC * FROM login WHERE name=? and password=?", l.Name, l.Password)
+	c.Get(&login, "SELECT * FROM login WHERE name=? and password=?", l.Name, l.Password)
 
 	writeResponse(w, http.StatusAccepted, "succes")
 }

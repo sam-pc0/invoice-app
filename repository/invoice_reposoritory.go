@@ -54,7 +54,6 @@ func (r *InvoiceRepository) GetInvoiceAndBillByID(id int) (model.BillJoinInvoice
 	var b model.BillJoinInvoice
 	err := r.client.Get(&b, query, id)
 	if err != nil {
-		log.Println("[InvoiceRepository]", err)
 		return model.BillJoinInvoice{}, err
 	}
 

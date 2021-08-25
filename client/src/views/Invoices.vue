@@ -41,8 +41,10 @@
             <p class="mb-2">
               {{ invoice.description }}
             </p>
-            <span class="is-block has-text-weight-medium"> Last edited </span>
-            <time datetime="2021-1-1">{{ invoice.timeString }}</time>
+            <span class="is-block has-text-weight-medium"> Last edit </span>
+            <time datetime="2021-1-1">{{
+              invoice.last_edit.toLocaleString()
+            }}</time>
           </div>
 
           <footer class="card-footer">
@@ -83,7 +85,10 @@ export default {
     setInvoices() {
       InvoiceService.getAll()
         .then(({ data }) => {
-          this.invoices = data;
+          this.invoices = data.map((element) => ({
+            ...element,
+            last_edit: new Date(element.last_edit),
+          })).reverse();
         })
         .catch(() => this.$toast.error("An error occurred while get invoices"));
     },
