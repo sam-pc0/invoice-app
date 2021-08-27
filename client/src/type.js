@@ -27,7 +27,6 @@ export const templatesEnum = {
 
 export class Owner {
   constructor({
-    id,
     name,
     address,
     location,
@@ -36,7 +35,6 @@ export class Owner {
     projectNameNAddress,
     email,
   }) {
-    this.id = id;
     this.name = name;
     this.address = address;
     this.location = location;
@@ -50,11 +48,9 @@ export class Owner {
 export class BIDProposal {
   constructor({
     id,
-    id_bid,
-    templateCode,
+    template_code,
     name,
     description,
-    number,
     owner,
     specificationNStimates,
     notIncluded,
@@ -63,17 +59,16 @@ export class BIDProposal {
     withdrawnDate,
   }) {
     this.id = id;
-    this.id_bid = id_bid;
-    this.templateCode = templateCode;
+    this.template_code = template_code;
     this.name = name;
     this.description = description;
-    this.number = number;
     this.owner = new Owner(owner);
     this.specificationNStimates = specificationNStimates;
     this.notIncluded = notIncluded;
     this.totalSum = totalSum;
     this.withdrawnDays = withdrawnDays;
-    this.withdrawnDate = withdrawnDate;
+    this.withdrawnDate =
+      withdrawnDate!== "" ? new Date(withdrawnDate) : new Date();
   }
 }
 

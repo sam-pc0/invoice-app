@@ -11,7 +11,7 @@
       @downladClicked="handleDownload"
     />
     <section v-animate-css="animatedObject" class="invoice">
-      <invoice-header invoiceType="BID Proposal" :number="invoice.number" />
+      <invoice-header invoiceType="BID Proposal" :number="invoice.id" />
       <owner
         @onSave="handleOwnerChange"
         :invoiceOwner="invoice.owner"

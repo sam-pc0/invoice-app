@@ -15,7 +15,7 @@ func NewOwnerRepository(db *sqlx.DB) OwnerRepository {
 	return OwnerRepository{db}
 }
 
-func (r *OwnerRepository) SaveOwner(o model.Owner) (int, error) {
+func (r *OwnerRepository) CreateOwner(o model.Owner) (int, error) {
 	query := `INSERT INTO owner(name, location, phone, altPhone, projectNameAddress, email, address)
 	VALUES (?, ?, ?, ?, ?, ?, ?)`
 
@@ -35,6 +35,18 @@ func (r *OwnerRepository) SaveOwner(o model.Owner) (int, error) {
 	}
 
 	return lastId, nil
+}
+
+func (r *OwnerRepository) DeleteOwnerbyBillId(billId int) (error) {
+	query := `DELETE o FROM owner o JOIN bills as b ON b.owner_id = o.id WHERE b.id = ?`
+	tx := r.client.MustBegin()
+	tx.MustExec(query, billId)
+	if err := tx.Commit(); err != nil {
+		log.Println("[OwnerRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+	return nil
 }
 
 func (r *OwnerRepository) GetOwnerByID(id int) (model.Owner, error) {

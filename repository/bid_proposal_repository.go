@@ -15,20 +15,44 @@ func NewBidProposalRepository(db *sqlx.DB) BidProposalRepository {
 	return BidProposalRepository{db}
 }
 
-func (r *BidProposalRepository) SaveBidProposal(b model.BidProposal, id int) {
+func (r *BidProposalRepository) CreateBid(billId int, b model.BidProposal) (int, error){
 	query := `INSERT INTO bid_proposal (specifications_stimates, not_included, totalSum, withdrawn_days, withdrawn_date, id_bill)
 	VALUES (?, ?, ?, ?, ?, ?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.TotalSum, b.WithdrawnDays, b.WithdrawnDate, id)
+	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.TotalSum, b.WithdrawnDays, b.WithdrawnDate, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BidProposalRepository Error]", err)
 		tx.Rollback()
-		return
+		return 0, err
+	} 
+	var lastId int
+	err := r.client.Get(&lastId, "SELECT LAST_INSERT_ID()")
+	if err != nil {
+		log.Println("[InvoiceRepository Error]", err)
+		return 0, err
 	}
+	return lastId, err 
 }
 
-func (r *BidProposalRepository) GetBidAndBillByID(id int) (model.BillJionBid, error) {
+func (r *BidProposalRepository) DeleteByBillId(id int) (error) {
+	query := `delete bid.*, o.*, b.*
+	 	from bid_proposal bid
+	 	join bills b on b.id = bid.id_bill
+	 	join owner o on b.owner_id = o.id
+	 	and b.id =?`
+	
+	tx := r.client.MustBegin()
+	tx.MustExec(query, id)
+	if err := tx.Commit(); err != nil {
+		log.Println("[BillRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+
+	return nil
+}
+func (r *BidProposalRepository) GetFullBidByBillId(billId int) (model.BillJoinBid, error) {
 	query := `SELECT bills.id "id",
 		bills.template_code "template_code", bills.name "name", bills.description, bills.lastEdit "lastEdit",
 		owner.id "owner.id", owner.name "owner.name", owner.phone "owner.phone", owner.location "owner.location"
@@ -43,11 +67,11 @@ func (r *BidProposalRepository) GetBidAndBillByID(id int) (model.BillJionBid, er
 	ON bills.id = bid_proposal.id_bill 
 	WHERE bills.id = ?`
 
-	var b model.BillJionBid
-	err := r.client.Get(&b, query, id)
+	var b model.BillJoinBid
+	err := r.client.Get(&b, query, billId)
 	if err != nil {
 		log.Println("[BidProposalRepository]", err)
-		return model.BillJionBid{}, err
+		return model.BillJoinBid{}, err
 	}
 
 	return b, nil

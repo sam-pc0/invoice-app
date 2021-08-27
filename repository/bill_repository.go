@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/canxega/invoice-app/model"
-	"github.com/canxega/invoice-app/repository/control"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -30,11 +29,11 @@ func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
 	return b, nil
 }
 
-func (r *BillRepository) CreateBill(b model.Bill) (int, error) {
-	query := `INSERT INTO bills (name, description, template_code, lastEdit) VALUES (?, ?, ?, ?)`
+func (r *BillRepository) CreateBill(ownerId int, b model.Bill) (int, error) {
+	query := `INSERT INTO bills (name, description, template_code, lastEdit, owner_id) VALUES (?, ?, ?, ?, ?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.Name, b.Description, b.TemplateCode, b.LastEdit)
+	tx.MustExec(query, b.Name, b.Description, b.TemplateCode, b.LastEdit, ownerId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BillRepository Error]", err)
 		tx.Rollback()
@@ -49,68 +48,38 @@ func (r *BillRepository) CreateBill(b model.Bill) (int, error) {
 	}
 
 	b.ID = lastId
-	switch b.TemplateCode {
-	case 1110:
-		inv := control.GenerateInvoice()
-		r.UpdateBillAndCreateInvoice(b.Owner, b, inv, b.TemplateCode)
-	case 1100:
-		bid := control.GenerateBidProposal()
-		_ = r.UpdateBillAndCreateBid(b.Owner, b, bid, b.TemplateCode)
-	}
 
 	return lastId, nil
 }
 
+func (r *BillRepository) GetBillTemplateCode(id int) (int, error) {
+	query := `SELECT 
+	template_code
+	FROM bills WHERE id = ?`
 
-func (r *BillRepository) DeleteBidById(id int) (error) {
-	query := `delete bid.*, o.*, b.*
-	 	from bid_proposal bid
-	 	join bills b on b.id = bid.id_bill
-	 	join owner o on b.owner_id = o.id
-	 	and b.id =?`
-	
+	var code int
+	err := r.client.Get(&code, query, id)
+	if err != nil {
+		log.Println("[BillRepository Error]", err)
+		return 0, err
+	}
+
+	return code, nil
+}
+
+func (r *BillRepository) DeleteById(id int) (error) {
+	query := `delete b from bills b where b.id = ?`
+
 	tx := r.client.MustBegin()
 	tx.MustExec(query, id)
 	if err := tx.Commit(); err != nil {
-		log.Println("[BillRepository Error]", err)
-		tx.Rollback()
-		return err
+  		log.Println("[BillRepository Error]", err)
+ 		tx.Rollback()
+ 		return err
 	}
-
 	return nil
 }
 
-func (r *BillRepository) DeleteInvoiceById(id int) (error) {
-	deleteItemsQuery := `delete i, i2
-        from item_invoice i
-        join items i2 on i.item_id = i2.id
-        and i.invoice_item =?`
-	
-	deleteBillQuery := `delete i.*, o.*, b.*
-	 	from invoices i
-	 	join bills b on b.id = i.id_bill
-	 	join owner o on b.owner_id = o.id
-	 	and b.id = ?`
-	
-	tx := r.client.MustBegin()
-	tx.MustExec(deleteItemsQuery, id)
-	if err := tx.Commit(); err != nil {
-		log.Println("[BillRepository Error]", err)
-		tx.Rollback()
-		return err
-	}
-
-	tx2 := r.client.MustBegin()
-	tx2.MustExec(deleteBillQuery, id)
-	if err := tx2.Commit(); err != nil {
-		log.Println("[BillRepository Error]", err)
-		tx.Rollback()
-		return err
-	}
-	
-
-	return nil
-}
 
 func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	query := `SELECT id, 
@@ -129,19 +98,6 @@ func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
 	return b, nil
 }
 
-func (r *BillRepository) GetBillContentByID(id int) (model.BillJionBid, error) {
-	dbBid := NewBidProposalRepository(r.client)
-	b, err := dbBid.GetBidAndBillByID(id)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return model.BillJionBid{}, err
-	}
-
-	return b, nil
-}
-
-
-
 func (r *BillRepository) UpdateBill(b model.Bill, id int) error {
 	log.Print("is here")
 	query := `UPDATE bills SET
@@ -159,34 +115,6 @@ func (r *BillRepository) UpdateBill(b model.Bill, id int) error {
 	}
 
 	return nil
-}
-
-
-
-func (r *BillRepository) GetBillInvoiceContentByID(id int) (model.BillJoinInvoice, error) {
-	dbInv := NewInvoiceRepository(r.client)
-	b, err := dbInv.GetInvoiceAndBillByID(id)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return model.BillJoinInvoice{}, err
-	}
-
-	return b, nil
-}
-
-func (r *BillRepository) VerifyCode(id int) (int, error) {
-	query := `SELECT 
-	template_code
-	FROM bills WHERE id = ?`
-
-	var code int
-	err := r.client.Get(&code, query, id)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return 0, err
-	}
-
-	return code, nil
 }
 
 func (r *BillRepository) UpdateContentBid(o model.Owner, b model.Bill, bid model.BidProposal) error {
@@ -236,86 +164,19 @@ func (r *BillRepository) UpdateContentInvoice(o model.Owner, b model.Bill, in mo
 		return err
 	}
 
-	dbItem := NewItemRepository(r.client)
-	for n, i := range it {
-		if n == 0 {
-			err = dbItem.UpdateItem(i, i.ID)
-		} else {
-			x, _ := dbItem.SaveItem(i)
-			err = dbItem.SaveItemInvoice(x, in.ID)
-		}
-		if err != nil {
-			log.Println("[BillRepository Error]", err)
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (r *BillRepository) UpdateBillAndCreateBid(owner model.Owner, bill model.Bill, bid model.BidProposal, code int) error {
-	id, err := saveOwnerBill(r.client, owner)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	err = updateBillOperation(r.client, code, id, bill.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	save := NewBidProposalRepository(r.client)
-	save.SaveBidProposal(bid, bill.ID)
-
-	return nil
-}
-
-func (r *BillRepository) UpdateBillAndCreateInvoice(owner model.Owner, bil model.Bill, invoice model.Invoice, code int) error {
-	id, err := saveOwnerBill(r.client, owner)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	err = updateBillOperation(r.client, code, id, bil.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	invoiceService := NewInvoiceRepository(r.client)
-	invoiceId, err := invoiceService.SaveInvoice(invoice, bil.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	log.Print(invoiceId)
-
-	return nil
-}
-
-func saveOwnerBill(c *sqlx.DB, owner model.Owner) (int, error) {
-	db := NewOwnerRepository(c)
-	return db.SaveOwner(owner)
-}
-
-func updateBillOperation(c *sqlx.DB, code, idO, idB int) error {
-	query := `UPDATE bills SET 
-	template_code = ?,
-	owner_id=?
-	WHERE id=?`
-
-	tx := c.MustBegin()
-	tx.MustExec(query, code, idO, idB)
-
-	if err := tx.Commit(); err != nil {
-		log.Println("[BillRepository Error]", err)
-		tx.Rollback()
-		return err
-	}
+	// dbItem := NewItemRepository(r.client)
+	// for n, i := range it {
+	// 	if n == 0 {
+	// 		err = dbItem.UpdateItem(i, i.ID)
+	// 	} else {
+	// 		x, _ := dbItem.SaveItem(i)
+	// 		err = dbItem.SaveItemInvoice(x, in.ID)
+	// 	}
+	// 	if err != nil {
+	// 		log.Println("[BillRepository Error]", err)
+	// 		return err
+	// 	}
+	// }
 
 	return nil
 }

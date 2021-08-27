@@ -1,21 +1,19 @@
 package service
 
 import (
+	"log"
+
 	"github.com/canxega/invoice-app/model"
 	"github.com/canxega/invoice-app/repository"
 )
 
-type BillServie interface {
+type BillService interface {
 	GetAllBillS() ([]model.BillRequestGet, error)
-	CreateBill(model.Bill) (int, error)
-	DeleteBidById(int) (error)
-	DeleteInvoiceById(int) (error)
+	CreateBill(int, model.Bill) (int, error)
 	GetBillById(int) (model.Bill, error)
-	SaveBillBid(model.Owner, model.Bill, model.BidProposal, int) error
-	SaveBillInvoice(model.Owner, model.Bill, model.Invoice, []model.Item, int) error
-	GetBidBill(int) (model.BillJionBid, error)
-	GetInvoiceBill(int) (model.BillJoinInvoice, error)
-	VerifyCode(int) (int, error)
+	GetTemplateCode(int) (int, error)
+	DeleteById(int) (error)
+
 	UpdateBillBid(model.Owner, model.Bill, model.BidProposal) error
 	UpdateBillInvoice(model.Owner, model.Bill, model.Invoice, []model.Item) error
 }
@@ -29,44 +27,40 @@ func NewBillService(r repository.BillRepository) DefaultBillService {
 }
 
 func (s DefaultBillService) GetAllBillS() ([]model.BillRequestGet, error) {
-	return s.R.GetAllBills()
+	bills, err := s.R.GetAllBills()
+	if err != nil {
+		log.Println("[BillService Error]", err)
+		return nil, err
+	}
+	return bills, nil
 }
 
-func (s DefaultBillService) CreateBill(b model.Bill) (int, error) {
-	return s.R.CreateBill(b)
+func (s DefaultBillService) CreateBill(ownerId int, b model.Bill) (int, error) {
+	billId, err := s.R.CreateBill(ownerId, b)
+	if err != nil {
+		log.Println("[BillService Error]", err)
+		return 0, err
+	}
+	return billId, err
 }
 
-func (s DefaultBillService) DeleteBidById(id int) (error) {
-	return s.R.DeleteBidById(id)
+func (s DefaultBillService) DeleteById(billId int) (error) {
+	err := s.R.DeleteById(billId)
+	if err != nil {
+		log.Println("[BillService Error]", err)
+		return  err
+	}
+	return nil
 }
 
-func (s DefaultBillService) DeleteInvoiceById(id int) (error) {
-	return s.R.DeleteInvoiceById(id)
+func (s DefaultBillService) GetTemplateCode(id int) (int, error) {
+	return s.R.GetBillTemplateCode(id)
 }
 
 func (s DefaultBillService) GetBillById(id int) (model.Bill, error) {
 	return s.R.GetBillByID(id)
 }
 
-func (s DefaultBillService) GetInvoiceBill(id int) (model.BillJoinInvoice, error) {
-	return s.R.GetBillInvoiceContentByID(id)
-}
-
-func (s DefaultBillService) SaveBillBid(o model.Owner, bill model.Bill, bid model.BidProposal, code int) error {
-	return s.R.UpdateBillAndCreateBid(o, bill, bid, code)
-}
-
-func (s DefaultBillService) SaveBillInvoice(o model.Owner, b model.Bill, inv model.Invoice, it []model.Item, code int) error {
-	return s.R.UpdateBillAndCreateInvoice(o, b, inv, code)
-}
-
-func (s DefaultBillService) GetBidBill(id int) (model.BillJionBid, error) {
-	return s.R.GetBillContentByID(id)
-}
-
-func (s DefaultBillService) VerifyCode(id int) (int, error) {
-	return s.R.VerifyCode(id)
-}
 
 func (s DefaultBillService) UpdateBillBid(o model.Owner, b model.Bill, bid model.BidProposal) error {
 	return s.R.UpdateContentBid(o, b, bid)

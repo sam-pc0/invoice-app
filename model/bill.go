@@ -33,7 +33,7 @@ type BillBid struct {
 
 // BillJionBid La estructura que se espera
 // sea devuelta para hacer el update
-type BillJionBid struct {
+type BillJoinBid struct {
 	ID                    int     `json:"id" db:"id"`
 	ID_BID                int     `json:"id_bid" db:"id_bid"`
 	Template_code         int     `json:"template_code" db:"template_code"`

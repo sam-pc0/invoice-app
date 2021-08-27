@@ -5,25 +5,35 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"github.com/gorilla/mux"
 
+	"github.com/canxega/invoice-app/db"
 	"github.com/canxega/invoice-app/model"
 	"github.com/canxega/invoice-app/service"
-	"github.com/gorilla/mux"
+	"github.com/canxega/invoice-app/repository"
 )
 
-type BillHandler struct {
-	S service.BillServie
-}
+
+var (
+	client = db.NewSqlClient()
+	BillService = service.NewBillService(repository.NewBillRepository(client.DB))
+	InvoiceService = service.NewInvoiceService(repository.NewInvoiceRepository(client.DB)) 
+	BidService = service.NewBidService(repository.NewBidProposalRepository(client.DB))
+	OwnerService = service.NewOwnerService(repository.NewOwnerRepository(client.DB)) 
+)
+
+type BillHandler struct {}
 
 func (h *BillHandler) GetBills(w http.ResponseWriter, r *http.Request) {
-	b, err := h.S.GetAllBillS()
+	bills, err := BillService.GetAllBillS()
+	
 	if err != nil {
 		log.Println("[Handler Bill Error]", err)
 		writeResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	writeResponse(w, http.StatusOK, b)
+	writeResponse(w, http.StatusOK, bills)
 }
 
 func (h *BillHandler) CreateBill(w http.ResponseWriter, r *http.Request) {
@@ -36,46 +46,86 @@ func (h *BillHandler) CreateBill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := h.S.CreateBill(b)
+	ownerId, err := OwnerService.CreateOwner(b.Owner)
 	if err != nil {
 		log.Println("[Handler Bill Error]", err)
 		writeResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	writeResponse(w, http.StatusCreated, id)
+	billId, err := BillService.CreateBill(ownerId, b)
+	if err != nil {
+		log.Println("[Handler Bill Error]", err)
+		writeResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	switch b.TemplateCode {
+	case model.INVOICE:
+		_, err := InvoiceService.CreateInvoice(billId) 
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+	case model.BID_PROPOSAL:
+		_, err := BidService.CreateBid(billId) 
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+	default:
+		writeResponse(w, http.StatusInternalServerError, "Invalid Data")
+	}
+
+	writeResponse(w, http.StatusOK, billId)
 }
 
 func (h *BillHandler) DeleteBill(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
+	billId, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		log.Println("[Handler Bill Error]", err, id)
+		log.Println("[Handler Bill Error]", err, billId)
 		writeResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	code, _ := h.S.VerifyCode(id)
 
+	code, _ := BillService.GetTemplateCode(billId)
 	switch code {
-	case 1100: // BID
-	  err := h.S.DeleteBidById(id)
+	case model.INVOICE: // Invoice
+		err = InvoiceService.DeleteByBillId(billId)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
 			writeResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		writeResponse(w, http.StatusOK, "success")
-	case 1110: // Invoice
-	  err := h.S.DeleteInvoiceById(id)
+	case model.BID_PROPOSAL: // BID
+	  err := BidService.DeleteByBillId(billId)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
 			writeResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
-		writeResponse(w, http.StatusOK, "success")
+	default:
+		writeResponse(w, http.StatusInternalServerError, "Invalid Data")
+	}
+
+	err = BillService.DeleteById(billId)
+	if err != nil {
+		log.Println("[Handler Bill Error]", err)
+		writeResponse(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
+	err = OwnerService.R.DeleteOwnerbyBillId(billId)
+	if err != nil {
+		log.Println("[Handler Bill Error]", err)
+		writeResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeResponse(w, http.StatusOK, "success")
 }
 
 func (h *BillHandler) GetBillById(w http.ResponseWriter, r *http.Request) {
@@ -87,18 +137,18 @@ func (h *BillHandler) GetBillById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	code, _ := h.S.VerifyCode(id)
+	code, _ := BillService.GetTemplateCode(id)
 	switch code {
-	case 1100: // BID
-		b, err := h.S.GetBidBill(id)
+	case model.INVOICE: // Invoice
+		b, err := InvoiceService.GetFullInvoiceByBillId(id)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
 			writeResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 		writeResponse(w, http.StatusOK, b)
-	case 1110: // Invoice
-		b, err := h.S.GetInvoiceBill(id)
+	case model.BID_PROPOSAL: // BID
+		b, err := BidService.CreateBid(id)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
 			writeResponse(w, http.StatusInternalServerError, err.Error())
@@ -109,7 +159,7 @@ func (h *BillHandler) GetBillById(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *BillHandler) GetBillContent(w http.ResponseWriter, r *http.Request) {
+func (h *BillHandler) UpdateBill(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -117,28 +167,7 @@ func (h *BillHandler) GetBillContent(w http.ResponseWriter, r *http.Request) {
 		writeResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
-
-	b, err := h.S.GetBillById(id)
-	if err != nil {
-		log.Println("[Handler Bill Error]", err)
-		writeResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	writeResponse(w, http.StatusOK, b)
-
-
-}
-
-func (h *BillHandler) SaveBill(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		log.Println("[Handler Bill Error]", err, id)
-		writeResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	code, _ := h.S.VerifyCode(id)
+	code, _ := BillService.GetTemplateCode(id)
 
 	switch code {
 	case 1110:
@@ -163,7 +192,7 @@ func (h *BillHandler) SaveBill(w http.ResponseWriter, r *http.Request) {
 			Description: b.Description,
 			LastEdit:    b.LastEdit,
 		}
-		err = h.S.UpdateBillInvoice(o, bill, in, it)
+		err = BillService.UpdateBillInvoice(o, bill, in, it)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
 			writeResponse(w, http.StatusInternalServerError, err.Error())
@@ -173,7 +202,7 @@ func (h *BillHandler) SaveBill(w http.ResponseWriter, r *http.Request) {
 		writeResponse(w, http.StatusAccepted, "success")
 		return
 	case 1100:
-		var b model.BillJionBid
+		var b model.BillJoinBid
 		err := json.NewDecoder(r.Body).Decode(&b)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
@@ -196,7 +225,7 @@ func (h *BillHandler) SaveBill(w http.ResponseWriter, r *http.Request) {
 			WithdrawnDays:         b.WithdrawnDays,
 			WithdrawnDate:         b.WithdrawnDate,
 		}
-		err = h.S.UpdateBillBid(o, bill, bid)
+		err = BillService.UpdateBillBid(o, bill, bid)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
 			writeResponse(w, http.StatusInternalServerError, err.Error())
@@ -207,77 +236,6 @@ func (h *BillHandler) SaveBill(w http.ResponseWriter, r *http.Request) {
 	default:
 		writeResponse(w, http.StatusBadRequest, "Invalid data")
 	}
-}
-
-func (h *BillHandler) BillsCreate(w http.ResponseWriter, r *http.Request) {
-	var code int
-	c := r.URL.Query().Get("code")
-	code, _ = strconv.Atoi(c)
-	switch code {
-	case 1100:
-		var billBid model.BillBid
-
-		err := json.NewDecoder(r.Body).Decode(&billBid)
-		if err != nil {
-			log.Println("[Handler Bill Error]", err)
-			writeResponse(w, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		b := model.Bill{
-			ID:          billBid.ID,
-			Name:        billBid.Name,
-			Description: billBid.Description,
-		}
-		var o model.Owner
-		bid := model.BidProposal{
-			SpecificationStimates: billBid.SpecificationStimates,
-			NotIncluded:           billBid.NotIncluded,
-			TotalSum:              billBid.TotalSum,
-			WithdrawnDays:         billBid.WithdrawnDays,
-			WithdrawnDate:         billBid.WithdrawnDate,
-		}
-
-		o = billBid.Owner
-		err = h.S.SaveBillBid(o, b, bid, billBid.Template_code)
-		if err != nil {
-			log.Println("[Handler Bill Error]", err)
-			writeResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	case 1110:
-		var billInvoice model.BillInvoice
-
-		err := json.NewDecoder(r.Body).Decode(&billInvoice)
-		if err != nil {
-			log.Println("[Handler Bill Error]", err)
-			writeResponse(w, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		items := billInvoice.Item
-		b := model.Bill{
-			ID:          billInvoice.ID,
-			Name:        billInvoice.Name,
-			Description: billInvoice.Description,
-		}
-		o := billInvoice.Owner
-		invoice := model.Invoice{
-			Total:          billInvoice.Total,
-			DateSubmmitted: billInvoice.DateSubmmitted,
-		}
-		err = h.S.SaveBillInvoice(o, b, invoice, items, billInvoice.Template_code)
-		if err != nil {
-			log.Println("[Handler Bill Error]", err)
-			writeResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-	default:
-		writeResponse(w, http.StatusBadRequest, "Invalid Data")
-		return
-	}
-
-	writeResponse(w, http.StatusAccepted, "success")
 }
 
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {
