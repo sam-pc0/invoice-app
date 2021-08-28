@@ -25,6 +25,9 @@ func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
 		log.Println("[BillRepository Error]", err)
 		return nil, err
 	}
+	if b == nil {
+		return []model.BillRequestGet{}, nil
+	}
 
 	return b, nil
 }
@@ -80,26 +83,7 @@ func (r *BillRepository) DeleteById(id int) (error) {
 	return nil
 }
 
-
-func (r *BillRepository) GetBillByID(id int) (model.Bill, error) {
-	query := `SELECT id, 
-	name,
-	description,
-	template_code
-	FROM bills WHERE id = ?`
-
-	var b model.Bill
-	err := r.client.Get(&b, query, id)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return model.Bill{}, err
-	}
-
-	return b, nil
-}
-
-func (r *BillRepository) UpdateBill(b model.Bill, id int) error {
-	log.Print("is here")
+func (r *BillRepository) UpdateBill(billId int, b model.Bill) error {
 	query := `UPDATE bills SET
 	name = ?,
 	description = ?,
@@ -107,76 +91,12 @@ func (r *BillRepository) UpdateBill(b model.Bill, id int) error {
 	WHERE id=?`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.Name, b.Description, b.LastEdit, id)
+	tx.MustExec(query, b.Name, b.Description, b.LastEdit, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BillRepository Error]", err)
 		tx.Rollback()
 		return err
 	}
-
-	return nil
-}
-
-func (r *BillRepository) UpdateContentBid(o model.Owner, b model.Bill, bid model.BidProposal) error {
-	dbOwner := NewOwnerRepository(r.client)
-	err := dbOwner.UpdateOwner(o, o.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	dbBill := NewBillRepository(r.client)
-	err = dbBill.UpdateBill(b, b.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	dbBid := NewBidProposalRepository(r.client)
-	err = dbBid.UpdateBid(bid, bid.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	return nil
-}
-
-func (r *BillRepository) UpdateContentInvoice(o model.Owner, b model.Bill, in model.Invoice, it []model.Item) error {
-	dbOwner := NewOwnerRepository(r.client)
-	err := dbOwner.UpdateOwner(o, o.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	dbBill := NewBillRepository(r.client)
-	err = dbBill.UpdateBill(b, b.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	dbInv := NewInvoiceRepository(r.client)
-	err = dbInv.UpdateInvoice(in, in.ID)
-	if err != nil {
-		log.Println("[BillRepository Error]", err)
-		return err
-	}
-
-	// dbItem := NewItemRepository(r.client)
-	// for n, i := range it {
-	// 	if n == 0 {
-	// 		err = dbItem.UpdateItem(i, i.ID)
-	// 	} else {
-	// 		x, _ := dbItem.SaveItem(i)
-	// 		err = dbItem.SaveItemInvoice(x, in.ID)
-	// 	}
-	// 	if err != nil {
-	// 		log.Println("[BillRepository Error]", err)
-	// 		return err
-	// 	}
-	// }
 
 	return nil
 }

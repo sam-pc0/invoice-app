@@ -77,7 +77,8 @@ func (r *BidProposalRepository) GetFullBidByBillId(billId int) (model.BillJoinBi
 	return b, nil
 }
 
-func (r *BidProposalRepository) UpdateBid(b model.BidProposal, id int) error {
+func (r *BidProposalRepository) UpdateBid(billId int, b model.BidProposal) error {
+
 	query := `UPDATE bid_proposal SET
 	specifications_stimates=?,
 	not_included=?,
@@ -87,7 +88,7 @@ func (r *BidProposalRepository) UpdateBid(b model.BidProposal, id int) error {
 	WHERE id=?`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.TotalSum, b.WithdrawnDays, b.WithdrawnDate, id)
+	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.TotalSum, b.WithdrawnDays, b.WithdrawnDate, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BidProposalRepository Error]", err)
 		tx.Rollback()

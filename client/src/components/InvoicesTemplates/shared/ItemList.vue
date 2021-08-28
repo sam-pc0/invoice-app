@@ -82,7 +82,7 @@ export default {
   },
   methods: {
     handleAdd() {
-      this.list.push({ name: "", description: "", amount: undefined });
+      this.list.push({ name: "", description: "", amount: 0});
     },
     handleDelete(index) {
       this.list.splice(index, 1);

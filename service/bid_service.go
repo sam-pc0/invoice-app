@@ -12,6 +12,7 @@ type BidService interface {
 	CreateBid(int) (int, error)
 	GetFullInvoiceByBillId(int) (model.BillJoinBid)
 	DeleteByBillId(int) (error)
+	UpdateBid(int, model.BidProposal)
 }
 
 type DefaultBidService struct {
@@ -44,6 +45,15 @@ func (s DefaultBidService) GetFullBidByBillId(billId int) (model.BillJoinBid, er
 
 func (s DefaultBidService) DeleteByBillId(billid int) (error) {
 	err := s.R.DeleteByBillId(billid) 
+	if err != nil {
+		log.Println("[InvoiceService Error]", err)
+		return err
+	}
+	return nil
+}
+
+func (s DefaultBidService) UpdateBid(billid int, b model.BidProposal) (error) {
+	err := s.R.UpdateBid(billid, b) 
 	if err != nil {
 		log.Println("[InvoiceService Error]", err)
 		return err

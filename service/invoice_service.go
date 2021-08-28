@@ -12,6 +12,7 @@ type InvoiceService interface {
 	CreateInvoice(int) (int, error)
 	GetFullInvoiceByBillId(int) (model.BillJoinInvoice)
 	DeleteByBillId(int) (error)
+	UpdateInvoice(int, model.Invoice, []model.Item)
 }
 
 type DefaultInvoiceService struct {
@@ -60,14 +61,39 @@ func (s DefaultInvoiceService) DeleteByBillId(billId int) (error) {
 	return nil 
 }
 
-func (s DefaultInvoiceService) CreateItems(billId int, items []model.Item) (int, error) {
-	itemsId, err := s.R.CreateItems(billId, items)
+func (s DefaultInvoiceService) UpdateInvoice(billId int, i model.Invoice, items []model.Item) (error) {
+	invoiceId, err := s.R.UpdateInvoice(billId, i)
 	if err != nil {
 		log.Println("[InvoiceService Error]", err)
-		return 0, err
+		return err
 	}
 
-	return itemsId, nil
+    err = s.DeleteAllItems(billId)
+	if err != nil {
+		log.Println("[InvoiceService Error]", err)
+		return err
+	}
+
+    err = s.CreateItems(invoiceId, items)
+	if err != nil {
+		log.Println("[InvoiceService Error]", err)
+		return err
+	}
+
+	return nil 
+}
+
+func (s DefaultInvoiceService) CreateItems(billId int, items []model.Item) (error) {
+	for _, i := range items {
+		err := s.R.CreateItem(billId, i)
+		if err != nil {
+			log.Println("[BillRepository Error]", err)
+			return err
+		}
+	}
+
+
+	return nil
 }
 
 func (s DefaultInvoiceService) GetItemsByBillId(billId int) ([]model.Item, error) {

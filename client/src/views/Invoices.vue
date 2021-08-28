@@ -13,6 +13,7 @@
         />
       </template>
     </b-modal>
+
     <section
       class="
         is-flex is-justify-content-space-between is-align-items-center
@@ -26,7 +27,8 @@
     </section>
     <div class="divider"></div>
     <!-- v-animate-css="'fadeInRight'" -->
-    <section class="row columns is-multiline">
+    <template v-if="invoices.length <= 0"> No invoices to show </template>
+    <section v-else class="row columns is-multiline">
       <div
         v-for="(invoice, i) in invoices"
         v-animate-css="getAnimateObject(i)"
@@ -84,11 +86,14 @@ export default {
   methods: {
     setInvoices() {
       InvoiceService.getAll()
-        .then(({ data }) => {
-          this.invoices = data.map((element) => ({
-            ...element,
-            last_edit: new Date(element.last_edit),
-          })).reverse();
+        .then((response) => {
+          const { data } = response;
+          this.invoices = data
+            .map((element) => ({
+              ...element,
+              last_edit: new Date(element.last_edit),
+            }))
+            .reverse();
         })
         .catch(() => this.$toast.error("An error occurred while get invoices"));
     },

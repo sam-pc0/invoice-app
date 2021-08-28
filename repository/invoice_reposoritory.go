@@ -52,47 +52,6 @@ func (r *InvoiceRepository) DeleteByBillId(billId int) (error) {
 	return nil
 }
 
-func (r *InvoiceRepository) DeleteAllItems(billId int) (error) {
-	deleteItemsQuery := `delete i, i2
-	from item_invoice i
-	join items i2 on i.item_id = i2.id
-	join invoices i3 on i3.id = i.invoice_item
-	join bills b on b.id = i.invoice_item
-	and b.id = ?`
-
-	tx := r.client.MustBegin()
-	tx.MustExec(deleteItemsQuery, billId)
-	if err := tx.Commit(); err != nil {
-		log.Println("[ItemsRepository Error]", err)
-		tx.Rollback()
-		return err
-	}
-	return nil
-}
-
-func (r *InvoiceRepository) CreateItems(billId int, items []model.Item) (int, error) {
-	query := `INSERT INTO items (description, amount, items)
-	VALUES (?,?,?)`
-
-	tx := r.client.MustBegin()
-	tx.MustExec(query, items[0].Description, items[0].Amount, items[0].Item)
-	if err := tx.Commit(); err != nil {
-		log.Println("[ItemsRepository Error]", err)
-		tx.Rollback()
-		return 0, err
-	}
-
-	var lastId int
-	err := r.client.Get(&lastId, "SELECT LAST_INSERT_ID()")
-	if err != nil {
-		log.Println("[ItemsRepository Error]", err)
-		return 0, err
-	}
-
-	return lastId, nil
-
-}
-
 func (r *InvoiceRepository) GetInvoiceByBillId(id int) (model.BillJoinInvoice, error) {
 	query := `
   SELECT
@@ -109,7 +68,7 @@ func (r *InvoiceRepository) GetInvoiceByBillId(id int) (model.BillJoinInvoice, e
 		owner.address "owner.address",
 		owner.email "owner.email",
 		invoices.total,
-		invoices.dateSubmmitted "date_submmitted"
+		invoices.dateSubmmitted
 	FROM bills
 	JOIN owner ON bills.owner_id = owner.id
 	JOIN invoices ON invoices.id_bill = bills.id 
@@ -124,37 +83,107 @@ func (r *InvoiceRepository) GetInvoiceByBillId(id int) (model.BillJoinInvoice, e
 	return b, nil
 }
 
-func (r *InvoiceRepository) GetItemsByBillId(id int) ([]model.Item, error) {
-	 query := `
-		select items.item, items.amount, items.description 
-	 	from items 
-		join item_invoice ii on items.id = ii.item_id
-		join invoices iii on iii.id = ii.invoice_item
-		join bills b on b.id = iii.bill_id
-		and b.id =?`
-	i := []model.Item{}
-	err := r.client.Select(&i, query, id)
-	if err != nil {
-		log.Println("[InvoiceRepository]", err)
-		return nil, err
-	}
+func (r *InvoiceRepository) UpdateInvoice(billId int, i model.Invoice) (int, error) {
+	query := `
+	UPDATE invoices 
+	JOIN bills b ON b.id = invoices.id_bill
+	SET
+	invoices.total = ?,
+	invoices.dateSubmmitted = ?
+	WHERE b.id = ?`
 
-	return i, nil
-}
-
-func (r *InvoiceRepository) UpdateInvoice(i model.Invoice, id int) error {
-	query := `UPDATE invoices SET
-	total = ?,
-	dateSubmmitted = ?
-	WHERE id = ?`
-
+	log.Print(i.DateSubmmitted)
 	tx := r.client.MustBegin()
-	tx.MustExec(query, i.Total, i.DateSubmmitted, id)
+	tx.MustExec(query, i.Total, i.DateSubmmitted, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[InvoiceRepository Error]", err)
+		tx.Rollback()
+		return 0, err
+	}
+
+	var lastId int
+	err := r.client.Get(&lastId, "SELECT i.id FROM invoices i JOIN bills b ON b.id = i.id_bill WHERE b.id = ?", billId)
+	if err != nil {
+		log.Println("[InvoiceRepository Error]", err)
+		return 0, err
+	}
+
+	return lastId, nil
+}
+
+func (r *InvoiceRepository) GetItemsByBillId(id int) ([]model.Item, error) {
+	query := `
+		SELECT
+		items.item,
+		items.amount,
+		items.description
+			FROM
+		items
+		JOIN item_invoice ii ON items.id = ii.item_id
+		JOIN invoices i ON i.id = ii.invoice_item
+		JOIN bills b ON b.id = i.id_bill
+			AND b.id = ?`
+
+   i := []model.Item{}
+   err := r.client.Select(&i, query, id)
+   if err != nil {
+	   log.Println("[InvoiceRepository]", err)
+	   return nil, err
+   }
+   return i, nil
+}
+
+func (r *InvoiceRepository) DeleteAllItems(billId int) (error) {
+	deleteItemsQuery := `
+	DELETE i, i2 
+	FROM item_invoice i
+	JOIN items i2 ON i.item_id = i2.id
+	JOIN invoices i3 ON i3.id = i.invoice_item
+	JOIN bills b ON b.id = i3.id_bill
+	AND b.id = ?`
+
+	tx := r.client.MustBegin()
+	tx.MustExec(deleteItemsQuery, billId)
+	if err := tx.Commit(); err != nil {
+		log.Println("[ItemsRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
+	return nil
+}
+
+func (r *InvoiceRepository) CreateItem(invoiceId int, item model.Item) (error) {
+	query := `INSERT INTO items (description, amount, item)
+	VALUES (?,?,?)`
+
+	tx := r.client.MustBegin()
+	tx.MustExec(query, item.Description, item.Amount, item.Item)
+	if err := tx.Commit(); err != nil {
+		log.Println("[ItemsRepository Error]", err)
 		tx.Rollback()
 		return err
 	}
 
+	var itemId int
+	err := r.client.Get(&itemId, "SELECT LAST_INSERT_ID()")
+	if err != nil {
+		log.Println("[InvoiceRepository Error]", err)
+		return err
+	}
+
+	return r.ItemRelation(invoiceId, itemId)
+}
+
+func (r *InvoiceRepository) ItemRelation(invoiceId int, itemId int) (error) {
+	query := `INSERT INTO item_invoice (item_id, invoice_item)
+	VALUES (?,?)`
+
+	tx := r.client.MustBegin()
+	tx.MustExec(query, itemId, invoiceId)
+	if err := tx.Commit(); err != nil {
+		log.Println("[ItemsRepository Error]", err)
+		tx.Rollback()
+		return err
+	}
 	return nil
 }

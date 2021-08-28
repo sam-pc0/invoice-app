@@ -100,10 +100,11 @@ export default {
       if (!this.isSavedClicked) {
         this.isSavedClicked = true;
         setTimeout(() => {
+          const invoice = {...this.invoice};
+          invoice.dateSubmitted = invoice.dateSubmitted.toString()
           InvoiceService.update(this.invoice)
             .then(() => {
               this.isSavedClicked = false;
-              console.info(this.invoice);
               this.$toast.success("Document were saved");
               this.$router.replace("/invoices");
             })

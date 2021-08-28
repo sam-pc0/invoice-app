@@ -10,12 +10,9 @@ import (
 type BillService interface {
 	GetAllBillS() ([]model.BillRequestGet, error)
 	CreateBill(int, model.Bill) (int, error)
-	GetBillById(int) (model.Bill, error)
 	GetTemplateCode(int) (int, error)
 	DeleteById(int) (error)
-
-	UpdateBillBid(model.Owner, model.Bill, model.BidProposal) error
-	UpdateBillInvoice(model.Owner, model.Bill, model.Invoice, []model.Item) error
+	UpdateBill(int, model.Bill) (error)
 }
 
 type DefaultBillService struct {
@@ -57,15 +54,6 @@ func (s DefaultBillService) GetTemplateCode(id int) (int, error) {
 	return s.R.GetBillTemplateCode(id)
 }
 
-func (s DefaultBillService) GetBillById(id int) (model.Bill, error) {
-	return s.R.GetBillByID(id)
-}
-
-
-func (s DefaultBillService) UpdateBillBid(o model.Owner, b model.Bill, bid model.BidProposal) error {
-	return s.R.UpdateContentBid(o, b, bid)
-}
-
-func (s DefaultBillService) UpdateBillInvoice(o model.Owner, b model.Bill, in model.Invoice, it []model.Item) error {
-	return s.R.UpdateContentInvoice(o, b, in, it)
+func (s DefaultBillService) UpdateBill(billId int,  bill model.Bill) error {
+	return s.R.UpdateBill(billId, bill)
 }

@@ -49,37 +49,35 @@ func (r *OwnerRepository) DeleteOwnerbyBillId(billId int) (error) {
 	return nil
 }
 
-func (r *OwnerRepository) GetOwnerByID(id int) (model.Owner, error) {
-	query := `SELECT * FROM owner WHERE id=?`
-
-	var o model.Owner
-	err := r.client.Get(&o, query, id)
-	if err != nil {
-		log.Println("[OwnerRepository Error]", err)
-		return model.Owner{}, err
-	}
-
-	return o, nil
-}
-
-func (r *OwnerRepository) UpdateOwner(o model.Owner, id int) error {
-	query := `UPDATE owner SET
-	name = ?,
-	location = ?,
-	phone = ?,
-	altPhone = ?,
-	projectNameAddress = ?,
-	email = ?,
-	address = ?
-	WHERE id=?`
+func (r *OwnerRepository) UpdateOwnerByBillId(billId int, o model.Owner) (int, error) {
+	query := `
+	UPDATE owner 
+	JOIN bills b ON b.owner_id=owner.id 
+	SET
+	owner.name = ?,
+	owner.location = ?,
+	owner.phone = ?,
+	owner.altPhone = ?,
+	owner.projectNameAddress = ?,
+	owner.email = ?,
+	owner.address = ?
+	WHERE b.id =?`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, o.Name, o.Location, o.Phone, o.AltPhone, o.ProjectNameAddress, o.Email, o.Address, id)
+	tx.MustExec(query, o.Name, o.Location, o.Phone, o.AltPhone, o.ProjectNameAddress, o.Email, o.Address, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[OwnerRepository Error]", err)
 		tx.Rollback()
-		return err
+		return 0, err
 	}
 
-	return nil
+	var lastId int
+	err := r.client.Get(&lastId, "SELECT LAST_INSERT_ID()")
+	if err != nil {
+		log.Println("[OwnerRepository Error]", err)
+		return 0, err
+	}
+
+
+	return lastId, nil
 }

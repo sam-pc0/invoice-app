@@ -69,6 +69,6 @@ type BillJoinInvoice struct {
 	Owner          Owner   `json:"owner"`
 	Items          []Item  `json:"items" db:"item"`
 	Total          float32 `json:"total"`
-	DateSubmmitted string  `json:"dateSubmitted" db:"date_submmitted"`
+	DateSubmmitted string  `json:"dateSubmitted" db:"dateSubmmitted"`
 	LastEdit       string  `json:"last_edit" db:"lastEdit"`
 }

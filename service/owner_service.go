@@ -9,8 +9,8 @@ import (
 
 type OwnerService interface {
 	CreateOwner(int, model.Owner) (int, error)
-	DeleteOwnerbyBillId(int) (error)
-	GetOwenerByID(int) (model.Owner, error)
+	DeleteOwnerByBillId(int) (error)
+	UpdateOwnerByBillId(int, model.Owner) (int, error)
 }
 
 type DefaultOwnerService struct {
@@ -29,6 +29,7 @@ func (s DefaultOwnerService) CreateOwner(o model.Owner) (int, error) {
 	}
 	return ownerId, nil
 }
+
 func (s DefaultOwnerService) DeleteOwnerbyBillId(billId int) (error) {
 	err := s.R.DeleteOwnerbyBillId(billId)
 	if err != nil {
@@ -38,12 +39,11 @@ func (s DefaultOwnerService) DeleteOwnerbyBillId(billId int) (error) {
 	return nil
 }
 
-func (s DefaultOwnerService) GetOwenerByID(id int) (model.Owner, error) {
-	owner, err := s.R.GetOwnerByID(id)
+func (s DefaultOwnerService) UpdateOwnerByBillId(billId int, owner model.Owner) (int, error) {
+	ownerId, err := s.R.UpdateOwnerByBillId(billId, owner) 
 	if err != nil {
 		log.Println("[OwnerService Error]", err)
-		return model.Owner{}, err
+		return 0, err
 	}
-	return owner, nil
-
+	return ownerId, nil
 }
