@@ -1,8 +1,7 @@
 import axios from "axios";
 import { URL } from "@/services/url";
 import { templatesEnum, BIDProposal, Invoice } from "@/type";
-// import MockService from "@/services/mock";
-//
+
 const castDataToBill = (data) => {
   const { template_code } = data;
   switch (template_code) {
@@ -25,7 +24,6 @@ export default {
       axios
         .get(`${URL}/bills/bill/${invoiceId}`)
         .then((response) => {
-          console.info(response.data);
           const castedData = castDataToBill(response.data);
           if (castedData === null) {
             reject();

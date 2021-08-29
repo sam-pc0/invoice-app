@@ -8,7 +8,6 @@
     >
       <template #default="">
         <TemplatesModal
-          @templateSelected="() => console.log('templateSelected')"
           @close="shouldShowTemplateModal = false"
         />
       </template>

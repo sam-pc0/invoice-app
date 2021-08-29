@@ -55,6 +55,7 @@ export class BIDProposal {
     specificationNStimates,
     notIncluded,
     totalSum,
+    submittedBy,
     withdrawnDays,
     withdrawnDate,
   }) {
@@ -67,6 +68,7 @@ export class BIDProposal {
     this.notIncluded = notIncluded;
     this.totalSum = totalSum;
     this.withdrawnDays = withdrawnDays;
+    this.submittedBy = submittedBy;
     this.withdrawnDate =
       withdrawnDate!== "" ? new Date(withdrawnDate) : new Date();
   }

@@ -75,7 +75,6 @@ export default {
       InvoiceService.get(invoiceId)
         .then((data) => {
           this.invoiceData = data;
-          console.info(this.invoiceData);
           this.loading = false;
         })
         .catch((error) => this.$toast.error(error));

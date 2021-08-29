@@ -38,7 +38,7 @@ func (r *OwnerRepository) CreateOwner(o model.Owner) (int, error) {
 }
 
 func (r *OwnerRepository) DeleteOwnerbyBillId(billId int) (error) {
-	query := `DELETE o FROM owner o JOIN bills as b ON b.owner_id = o.id WHERE b.id = ?`
+	query := `DELETE o FROM owner o JOIN bills b ON b.owner_id = o.id WHERE b.id = ?`
 	tx := r.client.MustBegin()
 	tx.MustExec(query, billId)
 	if err := tx.Commit(); err != nil {

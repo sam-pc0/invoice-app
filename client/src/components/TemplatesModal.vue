@@ -105,7 +105,6 @@ export default {
         description: this.description,
         last_edit: new Date(),
       };
-      console.info(invoiceData);
       InvoiceService.create(invoiceData)
         .then(({ data }) => {
           this.$router.push(`/invoices/${data}`);

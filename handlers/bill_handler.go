@@ -148,7 +148,7 @@ func (h *BillHandler) GetBillById(w http.ResponseWriter, r *http.Request) {
 		}
 		writeResponse(w, http.StatusOK, b)
 	case model.BID_PROPOSAL: // BID
-		b, err := BidService.CreateBid(id)
+		b, err := BidService.GetFullBidByBillId(id)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
 			writeResponse(w, http.StatusInternalServerError, err.Error())
@@ -163,36 +163,6 @@ func (h *BillHandler) UpdateBill(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _:= strconv.Atoi(vars["id"])
 
-	var b model.BillJoinInvoice
-	err := json.NewDecoder(r.Body).Decode(&b)
-	if err != nil {
-		log.Println("[Handler Bill Error]", err)
-		writeResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	owner := b.Owner
-	_, err = OwnerService.R.UpdateOwnerByBillId(id, owner)
-	if err != nil {
-		log.Println("[Handler Bill Error]", err)
-		writeResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	bill := model.Bill{
-		ID:          b.ID,
-		Name:        b.Name,
-		Description: b.Description,
-		LastEdit:    b.LastEdit,
-	}
-
-	err = BillService.UpdateBill(id, bill)
-	if err != nil {
-		log.Println("[Handler Bill Error]", err)
-		writeResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
 	code, err := BillService.GetTemplateCode(id)
 	if err != nil {
 		log.Println("[Handler Bill Error]", err)
@@ -201,7 +171,38 @@ func (h *BillHandler) UpdateBill(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch code {
-	case 1110:
+	case model.INVOICE:
+		var b model.BillJoinInvoice
+		err = json.NewDecoder(r.Body).Decode(&b)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+
+		owner := b.Owner
+		_, err = OwnerService.R.UpdateOwnerByBillId(id, owner)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		bill := model.Bill{
+			ID:          b.ID,
+			Name:        b.Name,
+			Description: b.Description,
+			LastEdit:    b.LastEdit,
+		}
+
+		err = BillService.UpdateBill(id, bill)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
 		items := b.Items
 		invoice := model.Invoice{
 			ID:             b.ID,
@@ -218,22 +219,47 @@ func (h *BillHandler) UpdateBill(w http.ResponseWriter, r *http.Request) {
 
 		writeResponse(w, http.StatusAccepted, "success")
 		return
-	case 1100:
+	case model.BID_PROPOSAL:
 		var b model.BillJoinBid
-		err := json.NewDecoder(r.Body).Decode(&b)
+		err = json.NewDecoder(r.Body).Decode(&b)
 		if err != nil {
 			log.Println("[Handler Bill Error]", err)
 			writeResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
+
+		owner := b.Owner
+		_, err = OwnerService.R.UpdateOwnerByBillId(id, owner)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		bill := model.Bill{
+			ID:          b.ID,
+			Name:        b.Name,
+			Description: b.Description,
+			LastEdit:    b.LastEdit,
+		}
+
+		err = BillService.UpdateBill(id, bill)
+		if err != nil {
+			log.Println("[Handler Bill Error]", err)
+			writeResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+
 		bid := model.BidProposal{
-			ID:                    b.ID_BID,
+			ID:                    b.ID,
 			SpecificationStimates: b.SpecificationStimates,
 			NotIncluded:           b.NotIncluded,
 			TotalSum:              b.TotalSum,
 			WithdrawnDays:         b.WithdrawnDays,
 			WithdrawnDate:         b.WithdrawnDate,
+			SubmittedBy: 		   b.SubmittedBy,
 		}
 		err = BidService.UpdateBid(id, bid)
 		if err != nil {

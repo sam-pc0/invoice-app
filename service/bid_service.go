@@ -37,7 +37,7 @@ func (s DefaultBidService) CreateBid(billId int) (int, error) {
 func (s DefaultBidService) GetFullBidByBillId(billId int) (model.BillJoinBid, error) {
 	billBid, err := s.R.GetFullBidByBillId(billId)
 	if err != nil {
-		log.Println("[InvoiceService Error]", err)
+		log.Println("[BidService Error]", err)
 		return model.BillJoinBid{}, err
 	}
 	return billBid, nil

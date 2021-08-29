@@ -134,6 +134,7 @@
 </template>
 
 <script>
+import InvoiceService from "@/services/invoice";
 import { BIDProposal } from "@/type";
 
 import PageHeader from "@/components/InvoicesTemplates/shared/PageHeader";
@@ -176,14 +177,26 @@ export default {
       if (!this.isSavedClicked) {
         this.isSavedClicked = true;
         setTimeout(() => {
-          console.info(this.invoice);
-          this.isSavedClicked = false;
+          let invoice = { ...this.invoice };
+          invoice = {
+            ...invoice,
+            totalSum: Number(invoice.totalSum),
+            withdrawnDays: Number(invoice.withdrawnDays)
+          };
+          InvoiceService.update(invoice)
+            .then(() => {
+              this.isSavedClicked = false;
+              this.$toast.success("Document were saved");
+              this.$router.replace("/invoices");
+            })
+            .catch((error) => this.$toast.error(error));
         }, 100);
       }
     },
     handlePageChange(data) {
       this.invoice.name = data.name;
       this.invoice.description = data.description;
+      this.invoice.last_edit = new Date();
     },
     handleOwnerChange(owner) {
       this.invoice.owner = owner;
