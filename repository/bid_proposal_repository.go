@@ -18,7 +18,7 @@ func NewBidProposalRepository(db *sqlx.DB) BidProposalRepository {
 func (r *BidProposalRepository) CreateBid(billId int, b model.BidProposal) (int, error){
 	query := `INSERT INTO bid_proposal (specifications_stimates, not_included, totalSum, withdrawn_days,
 		 withdrawn_date, submitted_by, id_bill)
-	VALUES (?, ?, ?, ?, ?, ?)`
+	VALUES (?, ?, ?, ?, ?, ?, ?)`
 
 	tx := r.client.MustBegin()
 	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.TotalSum, b.WithdrawnDays, b.WithdrawnDate, b.SubmittedBy, billId)
