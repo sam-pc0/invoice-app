@@ -1,5 +1,6 @@
 <template>
   <section class="proposal">
+    <b-loading v-model="isSavedClicked" />
     <page-header
       @onSave="handlePageChange"
       :invoiceName="invoice.name"
@@ -8,7 +9,7 @@
     />
     <option-buttons
       @saveClicked="handleSave"
-      @downladClicked="handleDownload"
+      @downloadClicked="handleDownload"
     />
     <section v-animate-css="animatedObject" class="invoice">
       <invoice-header invoiceType="BID Proposal" :number="invoice.id" />
@@ -135,12 +136,16 @@
 
 <script>
 import InvoiceService from "@/services/invoice";
+import { downloadBID } from "@/services/pdfgen";
 import { BIDProposal } from "@/type";
 
 import PageHeader from "@/components/InvoicesTemplates/shared/PageHeader";
 import OptionButtons from "@/components/InvoicesTemplates/shared/OptionButtons";
 import InvoiceHeader from "@/components/InvoicesTemplates/shared/InvoiceHeader";
 import Owner from "@/components/InvoicesTemplates/shared/Owner";
+
+const REDIRECT = true;
+const NO_REDIRECT = false;
 
 export default {
   name: "BidProposal",
@@ -169,29 +174,18 @@ export default {
   },
   methods: {
     handleDownload() {
-      if (!this.isSavedClicked) {
-        this.handleSave();
-      }
-    },
-    handleSave() {
-      if (!this.isSavedClicked) {
-        this.isSavedClicked = true;
-        setTimeout(() => {
-          let invoice = { ...this.invoice };
-          invoice = {
-            ...invoice,
-            totalSum: Number(invoice.totalSum),
-            withdrawnDays: Number(invoice.withdrawnDays)
-          };
-          InvoiceService.update(invoice)
-            .then(() => {
-              this.isSavedClicked = false;
-              this.$toast.success("Document were saved");
-              this.$router.replace("/invoices");
-            })
+      this.handleSave(NO_REDIRECT)
+        .then(() => {
+          this.isSavedClicked = true;
+          downloadBID(this.invoice)
+            .then(() => this.$toast.success("Document were saved"))
             .catch((error) => this.$toast.error(error));
-        }, 100);
-      }
+        })
+        .catch((error) => this.$toast.error(error))
+        .finally(() => this.isSavedClicked = false)
+    },
+    async handleSave(needToRedirect = REDIRECT) {
+      downloadINVO
     },
     handlePageChange(data) {
       this.invoice.name = data.name;

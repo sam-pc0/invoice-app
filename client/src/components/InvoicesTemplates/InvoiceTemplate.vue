@@ -8,7 +8,7 @@
     />
     <option-buttons
       @saveClicked="handleSave"
-      @downladClicked="handleDownload"
+      @downloadClicked="handleDownload"
     />
     <section v-animate-css="animatedObject" class="invoice">
       <invoice-header invoiceType="Invoice" :number="invoice.id" />
@@ -65,7 +65,10 @@ import OptionButtons from "@/components/InvoicesTemplates/shared/OptionButtons";
 import InvoiceHeader from "@/components/InvoicesTemplates/shared/InvoiceHeader";
 import Owner from "@/components/InvoicesTemplates/shared/Owner";
 import ItemList from "@/components/InvoicesTemplates/shared/ItemList";
+import { downloadINVO } from "@/services/pdfgeninvo2";
 import { Invoice } from "@/type";
+const REDIRECT = true;
+const NO_REDIRECT = false;
 export default {
   name: "InvoiceTemplate",
   components: {
@@ -94,14 +97,24 @@ export default {
   },
   methods: {
     handleDownload() {
-      !this.isSavedClicked && this.handleSave();
+      //!this.isSavedClicked && this.handleSave();
+
+      this.handleSave(NO_REDIRECT)
+        .then(() => {
+          this.isSavedClicked = true;
+          downloadINVO(this.invoice)
+            .then(() => this.$toast.success("Document were saved"))
+            .catch((error) => this.$toast.error(error));
+        })
+        .catch((error) => this.$toast.error(error))
+        .finally(() => (this.isSavedClicked = false));
     },
-    handleSave() {
+    async handleSave() {
       if (!this.isSavedClicked) {
         this.isSavedClicked = true;
         setTimeout(() => {
-          const invoice = {...this.invoice};
-          invoice.dateSubmitted = invoice.dateSubmitted.toString()
+          const invoice = { ...this.invoice };
+          invoice.dateSubmitted = invoice.dateSubmitted.toString();
           InvoiceService.update(this.invoice)
             .then(() => {
               this.isSavedClicked = false;
