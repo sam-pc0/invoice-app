@@ -185,25 +185,7 @@ export default {
         .finally(() => this.isSavedClicked = false)
     },
     async handleSave(needToRedirect = REDIRECT) {
-      if (!this.isSavedClicked) {
-        this.isSavedClicked = true;
-        setTimeout(() => {
-          let invoice = { ...this.invoice };
-          invoice = {
-            ...invoice,
-            totalSum: Number(invoice.totalSum),
-            withdrawnDays: Number(invoice.withdrawnDays),
-          };
-          InvoiceService.update(invoice)
-            .then(() => {
-              needToRedirect ? this.isSavedClicked = false : null;
-              needToRedirect && this.$toast.success("Document were saved");
-              needToRedirect && this.$router.replace("/invoices");
-            })
-            .catch((error) => this.$toast.error(error));
-        }, 100);
-      }
-      console.info(this.invoice);
+      downloadINVO
     },
     handlePageChange(data) {
       this.invoice.name = data.name;
