@@ -1,7 +1,7 @@
 <template>
   <div
     v-animate-css="animatedObject"
-    class="options is-flex is-flex-direction-column"
+    class="col-md-4 options is-multiline is-flex is-flex-direction-column"
   >
     <b-button
       @click="$emit('downloadClicked')"
@@ -46,9 +46,10 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/sass/index.scss";
 .options {
-  position: fixed;
+  position: static;
   top: 3em;
-  right: 10em;
+  
+  left: 3px;
   border: 2px solid $primary;
   background-color: rgba($white, 0.85);
   border-radius: 8px;

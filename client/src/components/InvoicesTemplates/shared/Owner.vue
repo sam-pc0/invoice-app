@@ -60,21 +60,48 @@
         </div>
       </div>
     </div>
-    <div
-      class="
-        owner__info
-        column
-        is-flex
-        is-flex-direction-column
-        is-align-items-left
-        is-justify-content-flex-start
-      "
-    >
-      <span> 1218 Grand Ave. </span>
-      <span class="is-size-6">Santa Rosa CA 95404 </span> <br />
-      <span class="has-text-weight-bold"> 707-236-7078 </span><br />
-      <span class="is-size-7">hector@floresgeneralconstruction.com </span>
-      <span class="is-size-6">CA CSLB License. #1074035 </span> <br />
+    <div class="owner__info">
+      <span class="column is-8-mobile is-8-tablet is-8-desktop is-8-widescreen">
+        1218 Grand Ave.
+      </span>
+      <span
+        class="
+          has-text-right
+          is-size-6
+          column
+          is-8-mobile is-8-tablet is-8-desktop is-8-widescreen
+        "
+        >Santa Rosa CA 95404
+      </span>
+      <br />
+      <span
+        class="
+          has-text-right has-text-weight-bold
+          column
+          is-8-mobile is-8-tablet is-8-desktop is-8-widescreen
+        "
+      >
+        707-236-7078 </span
+      ><br />
+      <span
+        class="
+          has-text-right
+          is-size-6
+          column
+          is-8-mobile is-8-tablet is-8-desktop is-8-widescreen
+        "
+        >CA CSLB License. #1074035
+      </span>
+      <br />
+
+      <span
+        class="
+          has-text-justified
+          column
+          is-4-mobile is-1-tablet is-4-desktop is-4-widescreen
+        "
+        >hector@floresgeneralconstruction.com </span
+      ><br />
     </div>
   </section>
 </template>

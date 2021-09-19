@@ -4,9 +4,24 @@
       class="is-flex is-justify-content-space-between is-align-items-flex-end"
     >
       <div class="page-header__form">
-        <input class="page-header__name input" v-model="name" />
+        <input
+          class="
+            page-header__name
+            input
+            is-flex
+            column
+            is-8-mobile is-8-tablet is-size-12-desktop
+          "
+          v-model="name"
+        />
         <textarea
-          class="page-header__description input mt-2"
+          class="
+            page-header__description
+            input
+            mt-6
+            column
+            is-8-mobile is-8-tablet is-size-12-desktop  
+          "
           v-model="description"
           maxlength="80"
         />
