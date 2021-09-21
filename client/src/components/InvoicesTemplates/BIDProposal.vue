@@ -44,7 +44,7 @@
         <div class="column is-half is-size-7">
           <div class="total">
             <b>c. WE PROPOSE: </b> for furnish materia, equipment and labor in
-            accordance with the above specifications for the sum of:
+            accordance with the above specifications for the sum of: $
             <span>
               <input
                 v-model="invoice.totalSum"

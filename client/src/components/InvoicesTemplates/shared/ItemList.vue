@@ -4,22 +4,56 @@
       <div class="item" v-for="(item, i) in list" :key="i">
         <input
           v-model="item.item"
-          class="item__name input is-small is-inline"
+          class="
+            item__name
+            input
+            column
+            is-small
+            is-inline
+            is-one-third
+            is-4-mobile
+            is-4-tablet
+            is-4-desktop
+            is-4-widescreen
+          "
+          placeho
           placeholder="Item"
         />
 
         <input
           v-model="item.description"
-          class="item__description input is-small is-inline"
+          class="
+            item__description
+            input
+            column
+            is-small
+            is-inline
+            is-4-mobile
+            is-4-tablet
+            is-4-desktop
+            is-4-widescreen
+          "
           placeholder="Description"
         />
 
         <input
           v-model="item.amount"
-          class="item__amount input is-small is-inline"
+          class="
+            item__amount
+            input
+            is-small is-inline
+            column
+            is-small
+            is-inline
+            is-4-mobile
+            is-4-tablet
+            is-4-desktop
+            is-4-widescreen
+          "
           type="number"
           placeholder="Amount"
         />
+
         <span
           @click="handleDelete(i)"
           class="item__delete mdi mdi-delete"
@@ -82,7 +116,7 @@ export default {
   },
   methods: {
     handleAdd() {
-      this.list.push({ name: "", description: "", amount: 0});
+      this.list.push({ name: "", description: "", amount: 0 });
     },
     handleDelete(index) {
       this.list.splice(index, 1);

@@ -124,6 +124,7 @@ export default {
             .catch((error) => this.$toast.error(error));
         }, 100);
       }
+      console.info(this.invoice);
     },
     handlePageChange(data) {
       this.invoice.name = data.name;
