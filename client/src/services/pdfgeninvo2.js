@@ -43,8 +43,8 @@ function makeRequest(urlEndpoint, method, apiKey, data = null) {
   });
 }
 
-let apiKey = "54c8NDY5MjoxNzAzOktGNGFBTUtGNGR2U2M4enI";
-let template_id = "58377b2b1d71950e";
+let apiKey = "64dcNDc2NToxNzc2OlFHYmVpaWwzaFNzTWZjQWU";
+let template_id = "30977b2b1dbec970";
 
 export function downloadINVO(invo = InvoiceTemplate) {
   return new Promise(async (resolve, reject) => {

@@ -43,11 +43,11 @@ function makeRequest(urlEndpoint, method, apiKey, data = null) {
   });
 }
 
-let apiKey = "54c8NDY5MjoxNzAzOktGNGFBTUtGNGR2U2M4enI";
-let template_id = "63577b2b1d7c6f2a";
+let apiKey = "64dcNDc2NToxNzc2OlFHYmVpaWwzaFNzTWZjQWU";
+let template_id = "04e77b2b1dbde0ca";
 
 export function downloadBID(bid = BIDProposal) {
-  return new Promise (async (resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       let resp = await makeRequest(
         "https://api.apitemplate.io/v1/create?template_id=" + template_id,
@@ -64,6 +64,5 @@ export function downloadBID(bid = BIDProposal) {
     } catch (error) {
       reject(error);
     }
-    
-  })
+  });
 }
