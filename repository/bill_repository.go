@@ -16,7 +16,7 @@ func NewBillRepository(db *sqlx.DB) BillRepository {
 }
 
 func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
-	query := `SELECT id,name,description,template_code,lastEdit
+	query := `SELECT id,name,description,template_code,lastEdit,
 	FROM bills`
 
 	var b []model.BillRequestGet
@@ -33,10 +33,11 @@ func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
 }
 
 func (r *BillRepository) CreateBill(ownerId int, b model.Bill) (int, error) {
-	query := `INSERT INTO bills (name, description, template_code, lastEdit, owner_id) VALUES (?, ?, ?, ?, ?)`
+	query := `INSERT INTO bills (name, description, template_code, lastEdit, owner_id, total, sub_total, tax_rate, tax) 
+	VALUES (?, ?, ?, ?, ? , ?, ?, ?, ?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.Name, b.Description, b.TemplateCode, b.LastEdit, ownerId)
+	tx.MustExec(query, b.Name, b.Description, b.TemplateCode, b.LastEdit, ownerId, 0, 0, 0, 0)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BillRepository Error]", err)
 		tx.Rollback()
@@ -87,11 +88,15 @@ func (r *BillRepository) UpdateBill(billId int, b model.Bill) error {
 	query := `UPDATE bills SET
 	name = ?,
 	description = ?,
-	lastEdit = ?
+	lastEdit = ?,
+	total = ?,
+	sub_total = ?,
+	tax_rate = ?,
+	tax = ?,
 	WHERE id=?`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.Name, b.Description, b.LastEdit, billId)
+	tx.MustExec(query, b.Name, b.Description, b.LastEdit, b.Total, b.SubTotal, b.TaxRate, b.Tax, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BillRepository Error]", err)
 		tx.Rollback()

@@ -16,11 +16,11 @@ func NewInvoiceRepository(db *sqlx.DB) InvoiceRepository {
 }
 
 func (r *InvoiceRepository) CreateInvoice(billId int, invoice model.Invoice) (int, error) {
-	query := `INSERT INTO invoices (total, dateSubmmitted, id_bill)
-	VALUES (?,?,?)`
+	query := `INSERT INTO invoices (dateSubmmitted, id_bill)
+	VALUES (?,?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, invoice.Total, invoice.DateSubmmitted, billId)
+	tx.MustExec(query, invoice.DateSubmmitted, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[InvoiceRepository Error]", err)
 		tx.Rollback()
@@ -60,6 +60,10 @@ func (r *InvoiceRepository) GetInvoiceByBillId(id int) (model.BillJoinInvoice, e
 		bills.name, 
 		bills.description, 
 		bills.lastEdit,
+		bills.total,	
+		bills.sub_total "subTotal",
+		bills.tax_rate "taxRate",
+		bills.tax,
 		owner.name "owner.name",
 		owner.location "owner.location", 
 		owner.phone "owner.phone", 
@@ -88,13 +92,12 @@ func (r *InvoiceRepository) UpdateInvoice(billId int, i model.Invoice) (int, err
 	UPDATE invoices 
 	JOIN bills b ON b.id = invoices.id_bill
 	SET
-	invoices.total = ?,
 	invoices.dateSubmmitted = ?
 	WHERE b.id = ?`
 
 	log.Print(i.DateSubmmitted)
 	tx := r.client.MustBegin()
-	tx.MustExec(query, i.Total, i.DateSubmmitted, billId)
+	tx.MustExec(query, i.DateSubmmitted, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[InvoiceRepository Error]", err)
 		tx.Rollback()

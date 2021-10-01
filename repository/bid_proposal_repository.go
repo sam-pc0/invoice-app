@@ -16,12 +16,11 @@ func NewBidProposalRepository(db *sqlx.DB) BidProposalRepository {
 }
 
 func (r *BidProposalRepository) CreateBid(billId int, b model.BidProposal) (int, error){
-	query := `INSERT INTO bid_proposal (specifications_stimates, not_included, totalSum, withdrawn_days,
-		 withdrawn_date, submitted_by, id_bill)
-	VALUES (?, ?, ?, ?, ?, ?, ?)`
+	query := `INSERT INTO bid_proposal (specifications_stimates, not_included, withdrawn_days, withdrawn_date, submitted_by, id_bill)
+	VALUES (?, ?, ?, ?, ?, ?)`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.TotalSum, b.WithdrawnDays, b.WithdrawnDate, b.SubmittedBy, billId)
+	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.WithdrawnDays, b.WithdrawnDate, b.SubmittedBy, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BidProposalRepository Error]", err)
 		tx.Rollback()
@@ -56,9 +55,10 @@ func (r *BidProposalRepository) DeleteByBillId(id int) (error) {
 
 func (r *BidProposalRepository) GetFullBidByBillId(billId int) (model.BillJoinBid, error) {
 	query := `SELECT 
-	bills.id "id", bills.template_code "template_code", bills.name "name", bills.description, bills.lastEdit "lastEdit",
+	bills.id "id", bills.template_code "template_code", bills.name "name", bills.total, bills.sub_total "subTotal",
+	bills.tax_rate "taxRate", bills.tax,bills.description, bills.lastEdit "lastEdit",	
 	owner.name "owner.name", owner.phone "owner.phone", owner.location "owner.location" ,owner.address "owner.address", 
-	owner.altPhone "owner.altPhone",owner.projectNameAddress "owner.projectNameAddress", owner.email "owner.email",
+	owner.altPhone "owner.altPhone", owner.projectNameAddress "owner.projectNameAddress", owner.email "owner.email",
 	bid_proposal.specifications_stimates, bid_proposal.not_included, bid_proposal.totalSum, bid_proposal.withdrawn_days, 
 	bid_proposal.withdrawn_date, bid_proposal.submitted_by
 	FROM bills
@@ -83,14 +83,13 @@ func (r *BidProposalRepository) UpdateBid(billId int, b model.BidProposal) error
 	SET
 	specifications_stimates=?,
 	not_included=?,
-	totalSum=?,
 	withdrawn_days=?,
 	withdrawn_date=?,
 	submitted_by=?
 	WHERE b.id=?`
 
 	tx := r.client.MustBegin()
-	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.TotalSum, b.WithdrawnDays, b.WithdrawnDate, b.SubmittedBy, billId)
+	tx.MustExec(query, b.SpecificationStimates, b.NotIncluded, b.WithdrawnDays, b.WithdrawnDate, b.SubmittedBy, billId)
 	if err := tx.Commit(); err != nil {
 		log.Println("[BidProposalRepository Error]", err)
 		tx.Rollback()

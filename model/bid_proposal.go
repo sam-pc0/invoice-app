@@ -4,7 +4,6 @@ type BidProposal struct {
 	ID                    int     `json:"id"`
 	SpecificationStimates string  `json:"specificationstimates"`
 	NotIncluded           string  `json:"notIncluded"`
-	TotalSum              float32 `json:"totalSum"`
 	WithdrawnDays         int     `json:"withdrawnDays"`
 	WithdrawnDate         string  `json:"withdrawnDate"`
 	SubmittedBy           string  `json:"submittedBy"`
@@ -18,9 +17,12 @@ type BillJoinBid struct {
 	Owner                 Owner   `json:"owner" db:"owner"`
 	SpecificationStimates string  `json:"specificationNStimates" db:"specifications_stimates"`
 	NotIncluded           string  `json:"notIncluded" db:"not_included"`
-	TotalSum              float32 `json:"totalSum" db:"totalSum"`
 	WithdrawnDays         int     `json:"withdrawnDays" db:"withdrawn_days"`
 	WithdrawnDate         string  `json:"withdrawnDate" db:"withdrawn_date"`
 	SubmittedBy           string  `json:"submittedBy" db:"submitted_by"`
 	LastEdit              string  `json:"last_edit" db:"lastEdit"`
+	Total                 float32 `json:"total" db:"total"`
+	SubTotal              float32 `json:"subTotal" db:"sub_total"`
+	TaxRate               float32 `json:"taxRate" db:"tax_rate"`
+	Tax                   float32 `json:"tax" db:"tax"`
 }

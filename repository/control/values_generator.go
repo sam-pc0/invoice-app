@@ -12,7 +12,6 @@ func GenerateItem() model.Item {
 
 func GenerateInvoice() model.Invoice {
 	return model.Invoice{
-		Total:          0.0,
 		DateSubmmitted: "",
 	}
 }
@@ -21,7 +20,6 @@ func GenerateBidProposal() model.BidProposal {
 	return model.BidProposal{
 		SpecificationStimates: "",
 		NotIncluded:           "",
-		TotalSum:              0,
 		WithdrawnDays:         0,
 		WithdrawnDate:         "",
 	}

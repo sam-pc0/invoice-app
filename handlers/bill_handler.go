@@ -194,6 +194,10 @@ func (h *BillHandler) UpdateBill(w http.ResponseWriter, r *http.Request) {
 			Name:        b.Name,
 			Description: b.Description,
 			LastEdit:    b.LastEdit,
+			Total:       b.Total,
+			SubTotal:    b.SubTotal,
+			TaxRate:     b.TaxRate,
+			Tax:         b.Tax,
 		}
 
 		err = BillService.UpdateBill(id, bill)
@@ -206,7 +210,6 @@ func (h *BillHandler) UpdateBill(w http.ResponseWriter, r *http.Request) {
 		items := b.Items
 		invoice := model.Invoice{
 			ID:             b.ID,
-			Total:          b.Total,
 			DateSubmmitted: b.DateSubmmitted,
 		}
 
@@ -242,6 +245,10 @@ func (h *BillHandler) UpdateBill(w http.ResponseWriter, r *http.Request) {
 			Name:        b.Name,
 			Description: b.Description,
 			LastEdit:    b.LastEdit,
+			Total:       b.Total,
+			SubTotal:    b.SubTotal,
+			TaxRate:     b.TaxRate,
+			Tax:         b.Tax,
 		}
 
 		err = BillService.UpdateBill(id, bill)
@@ -256,10 +263,9 @@ func (h *BillHandler) UpdateBill(w http.ResponseWriter, r *http.Request) {
 			ID:                    b.ID,
 			SpecificationStimates: b.SpecificationStimates,
 			NotIncluded:           b.NotIncluded,
-			TotalSum:              b.TotalSum,
 			WithdrawnDays:         b.WithdrawnDays,
 			WithdrawnDate:         b.WithdrawnDate,
-			SubmittedBy: 		   b.SubmittedBy,
+			SubmittedBy: 		       b.SubmittedBy,
 		}
 		err = BidService.UpdateBid(id, bid)
 		if err != nil {
