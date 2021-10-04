@@ -55,11 +55,11 @@ func (r *BidProposalRepository) DeleteByBillId(id int) (error) {
 
 func (r *BidProposalRepository) GetFullBidByBillId(billId int) (model.BillJoinBid, error) {
 	query := `SELECT 
-	bills.id "id", bills.template_code "template_code", bills.name "name", bills.total, bills.sub_total "subTotal",
-	bills.tax_rate "taxRate", bills.tax,bills.description, bills.lastEdit "lastEdit",	
+	bills.id "id", bills.template_code "template_code", bills.name "name", bills.total, bills.sub_total,
+	bills.tax_rate, bills.tax, bills.description, bills.lastEdit "lastEdit",	
 	owner.name "owner.name", owner.phone "owner.phone", owner.location "owner.location" ,owner.address "owner.address", 
 	owner.altPhone "owner.altPhone", owner.projectNameAddress "owner.projectNameAddress", owner.email "owner.email",
-	bid_proposal.specifications_stimates, bid_proposal.not_included, bid_proposal.totalSum, bid_proposal.withdrawn_days, 
+	bid_proposal.specifications_stimates, bid_proposal.not_included, bid_proposal.withdrawn_days, 
 	bid_proposal.withdrawn_date, bid_proposal.submitted_by
 	FROM bills
 	JOIN owner ON owner.id = bills.owner_id

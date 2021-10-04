@@ -16,8 +16,7 @@ func NewBillRepository(db *sqlx.DB) BillRepository {
 }
 
 func (r *BillRepository) GetAllBills() ([]model.BillRequestGet, error) {
-	query := `SELECT id,name,description,template_code,lastEdit,
-	FROM bills`
+	query := `SELECT id,name,description,template_code,lastEdit FROM bills`
 
 	var b []model.BillRequestGet
 	err := r.client.Select(&b, query)
@@ -92,7 +91,7 @@ func (r *BillRepository) UpdateBill(billId int, b model.Bill) error {
 	total = ?,
 	sub_total = ?,
 	tax_rate = ?,
-	tax = ?,
+	tax = ?
 	WHERE id=?`
 
 	tx := r.client.MustBegin()

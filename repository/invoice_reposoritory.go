@@ -61,8 +61,8 @@ func (r *InvoiceRepository) GetInvoiceByBillId(id int) (model.BillJoinInvoice, e
 		bills.description, 
 		bills.lastEdit,
 		bills.total,	
-		bills.sub_total "subTotal",
-		bills.tax_rate "taxRate",
+		bills.sub_total,
+		bills.tax_rate,
 		bills.tax,
 		owner.name "owner.name",
 		owner.location "owner.location", 
@@ -71,7 +71,6 @@ func (r *InvoiceRepository) GetInvoiceByBillId(id int) (model.BillJoinInvoice, e
 		owner.projectNameAddress "owner.projectNameAddress",
 		owner.address "owner.address",
 		owner.email "owner.email",
-		invoices.total,
 		invoices.dateSubmmitted
 	FROM bills
 	JOIN owner ON bills.owner_id = owner.id
