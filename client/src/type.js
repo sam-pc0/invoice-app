@@ -45,6 +45,15 @@ export class Owner {
   }
 }
 
+export class TotalsData {
+  constructor({ subTotal, total, taxRate, tax }) {
+    this.subTotal = subTotal;
+    this.total = total;
+    this.taxRate = taxRate;
+    this.tax = tax;
+  }
+}
+
 export class BIDProposal {
   constructor({
     id,
@@ -54,7 +63,10 @@ export class BIDProposal {
     owner,
     specificationNStimates,
     notIncluded,
-    totalSum,
+    subTotal,
+    total,
+    taxRate,
+    tax,
     submittedBy,
     withdrawnDays,
     withdrawnDate,
@@ -66,11 +78,14 @@ export class BIDProposal {
     this.owner = new Owner(owner);
     this.specificationNStimates = specificationNStimates;
     this.notIncluded = notIncluded;
-    this.totalSum = totalSum;
     this.withdrawnDays = withdrawnDays;
+    this.subTotal = subTotal;
+    this.total = total;
+    this.taxRate = taxRate;
+    this.tax = tax;
     this.submittedBy = submittedBy;
     this.withdrawnDate =
-      withdrawnDate!== "" ? new Date(withdrawnDate) : new Date();
+      withdrawnDate !== "" ? new Date(withdrawnDate) : new Date();
   }
 }
 
@@ -101,7 +116,10 @@ export class Invoice {
     description,
     owner,
     items,
+    subTotal,
     total,
+    taxRate,
+    tax,
     dateSubmitted,
   }) {
     this.id = id;
@@ -111,7 +129,10 @@ export class Invoice {
     this.description = description;
     this.owner = new Owner(owner);
     this.items = new ItemList(items);
+    this.subTotal = subTotal;
     this.total = total;
+    this.taxRate = taxRate;
+    this.tax = tax;
     this.dateSubmitted =
       dateSubmitted !== "" ? new Date(dateSubmitted) : new Date();
   }

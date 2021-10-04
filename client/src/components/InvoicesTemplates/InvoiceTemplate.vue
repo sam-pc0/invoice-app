@@ -17,9 +17,10 @@
         :invoiceOwner="invoice.owner"
         :isSavedClicked="isSavedClicked"
       />
-      <ItemList
-        @onSave="handleItemsListChange"
-        :itemList="invoice.items"
+      <ItemList @onChange="handleItemsListChange" :itemList="invoice.items" />
+      <TotalsExternalSubTotal
+        @onSave="handleTotalsChange"
+        :invoiceTotals="getTotals"
         :isSavedClicked="isSavedClicked"
       />
       <section class="mt-4">
@@ -65,10 +66,13 @@ import OptionButtons from "@/components/InvoicesTemplates/shared/OptionButtons";
 import InvoiceHeader from "@/components/InvoicesTemplates/shared/InvoiceHeader";
 import Owner from "@/components/InvoicesTemplates/shared/Owner";
 import ItemList from "@/components/InvoicesTemplates/shared/ItemList";
+import TotalsExternalSubTotal from "@/components/InvoicesTemplates/shared/Totals/TotalsExternalSubTotal.vue";
+
 import { downloadINVO } from "@/services/pdfgeninvo2";
-import { Invoice } from "@/type";
+import { Invoice, TotalsData } from "@/type";
 const REDIRECT = true;
 const NO_REDIRECT = false;
+
 export default {
   name: "InvoiceTemplate",
   components: {
@@ -77,11 +81,22 @@ export default {
     InvoiceHeader,
     Owner,
     ItemList,
+    TotalsExternalSubTotal
   },
   props: {
     invoiceData: {
       required: true,
       type: Invoice,
+    },
+  },
+  computed: {
+    getTotals() {
+      return new TotalsData({
+        subTotal: this.invoice.subTotal,
+        total: this.invoice.total,
+        taxRate: this.invoice.taxRate,
+        tax: this.invoice.tax,
+      });
     },
   },
   data() {
@@ -124,7 +139,6 @@ export default {
             .catch((error) => this.$toast.error(error));
         }, 100);
       }
-      console.info(this.invoice);
     },
     handlePageChange(data) {
       this.invoice.name = data.name;
@@ -133,10 +147,13 @@ export default {
     },
     handleItemsListChange({ item, total }) {
       this.invoice.items = item;
-      this.invoice.total = total;
+      this.invoice.subTotal = total;
     },
     handleOwnerChange(owner) {
       this.invoice.owner = owner;
+    },
+    handleTotalsChange(totals) {
+      this.invoice = { ...this.invoice, ...totals };
     },
     autoHeight({ target }, minHeight) {
       target.style.height = minHeight;

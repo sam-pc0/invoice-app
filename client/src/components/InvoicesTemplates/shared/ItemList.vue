@@ -16,7 +16,6 @@
             is-4-desktop
             is-4-widescreen
           "
-          placeho
           placeholder="Item"
         />
 
@@ -38,6 +37,7 @@
 
         <input
           v-model="item.amount"
+          @input="emitChange"
           class="
             item__amount
             input
@@ -69,10 +69,6 @@
         Add</b-button
       >
     </section>
-    <section class="mt-3">
-      <span class="has-text-weight-bold"> Total of this Invoice: </span>
-      {{ totalInvoice }}
-    </section>
   </div>
 </template>
 
@@ -83,30 +79,16 @@ export default {
     itemList: {
       type: Array,
     },
-    isSavedClicked: {
-      type: Boolean,
-    },
-  },
-  watch: {
-    isSavedClicked(newVal) {
-      const item = this.list.map((element) => ({
-        ...element,
-        amount: Number(element.amount),
-      }));
-      newVal &&
-        this.$emit("onSave", {
-          item,
-          total: Number(this.totalInvoice),
-        });
-    },
   },
   computed: {
     totalInvoice() {
-      return this.list.length > 0
-        ? this.list
-            .map((item) => Number(item.amount))
-            .reduce((total, amount) => total + amount)
-        : 0;
+      const total =
+        this.list.length > 0
+          ? this.list
+              .map((item) => Number(item.amount))
+              .reduce((total, amount) => total + amount)
+          : 0;
+      return total;
     },
   },
   data() {
@@ -115,6 +97,15 @@ export default {
     };
   },
   methods: {
+    emitChange() {
+      this.$emit("onChange", {
+        item: this.list.map((item) => ({
+          ...item,
+          amount: Number(item.amount),
+        })),
+        total: Number(this.totalInvoice),
+      });
+    },
     handleAdd() {
       this.list.push({ name: "", description: "", amount: 0 });
     },

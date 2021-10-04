@@ -40,21 +40,19 @@
           class="lined-input input textarea is-small"
         />
       </section>
+      <Totals
+        @onTotalChange="(total) => (this.total = total)"
+        @onSave="handleTotalsChange"
+        :invoiceTotals="getTotals"
+        :isSavedClicked="isSavedClicked"
+        class="mt-6"
+      />
       <section class="columns mt-3">
         <div class="column is-half is-size-7">
           <div class="total">
             <b>c. WE PROPOSE: </b> for furnish materia, equipment and labor in
             accordance with the above specifications for the sum of: $
-            <span>
-              <input
-                v-model="invoice.totalSum"
-                class="input is-small is-inline"
-                type="number"
-                style="width: 10em"
-                placeholder="total"
-              />
-            </span>
-            dollars.
+            <b>{{ total }} dollars. </b>
           </div>
 
           <div class="total mt-3">
@@ -137,12 +135,13 @@
 <script>
 import InvoiceService from "@/services/invoice";
 import { downloadBID } from "@/services/pdfgen";
-import { BIDProposal } from "@/type";
+import { BIDProposal, TotalsData } from "@/type";
 
 import PageHeader from "@/components/InvoicesTemplates/shared/PageHeader";
 import OptionButtons from "@/components/InvoicesTemplates/shared/OptionButtons";
 import InvoiceHeader from "@/components/InvoicesTemplates/shared/InvoiceHeader";
 import Owner from "@/components/InvoicesTemplates/shared/Owner";
+import Totals from "@/components/InvoicesTemplates/shared/Totals/Totals";
 
 const REDIRECT = true;
 const NO_REDIRECT = false;
@@ -154,6 +153,7 @@ export default {
     OptionButtons,
     InvoiceHeader,
     Owner,
+    Totals,
   },
   props: {
     invoiceData: {
@@ -161,9 +161,20 @@ export default {
       type: BIDProposal,
     },
   },
+  computed: {
+    getTotals() {
+      return new TotalsData({
+        subTotal: this.invoice.subTotal,
+        total: this.invoice.total,
+        taxRate: this.invoice.taxRate,
+        tax: this.invoice.tax,
+      });
+    },
+  },
   data() {
     return {
       invoice: this.invoiceData,
+      total: this.invoiceData.total,
       isSavedClicked: false,
       animatedObject: {
         classes: "fadeInRight",
@@ -182,7 +193,7 @@ export default {
             .catch((error) => this.$toast.error(error));
         })
         .catch((error) => this.$toast.error(error))
-        .finally(() => this.isSavedClicked = false)
+        .finally(() => (this.isSavedClicked = false));
     },
     async handleSave(needToRedirect = REDIRECT) {
       if (!this.isSavedClicked) {
@@ -196,7 +207,7 @@ export default {
           };
           InvoiceService.update(invoice)
             .then(() => {
-              needToRedirect ? this.isSavedClicked = false : null;
+              needToRedirect ? (this.isSavedClicked = false) : null;
               needToRedirect && this.$toast.success("Document were saved");
               needToRedirect && this.$router.replace("/invoices");
             })
@@ -213,6 +224,9 @@ export default {
     },
     handleOwnerChange(owner) {
       this.invoice.owner = owner;
+    },
+    handleTotalsChange(totals) {
+      this.invoice = { ...this.invoice, ...totals };
     },
     autoHeight({ target }, minHeight) {
       target.style.height = minHeight;
