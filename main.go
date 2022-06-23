@@ -1,6 +1,6 @@
 package main
 
-import "github.com/canxega/invoice-app/api"
+import "github.com/sam-pc0/invoice-app/api"
 
 func main() {
 	api.Start()

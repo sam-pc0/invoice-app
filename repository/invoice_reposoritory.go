@@ -3,7 +3,7 @@ package repository
 import (
 	"log"
 
-	"github.com/canxega/invoice-app/model"
+	"github.com/sam-pc0/invoice-app/model"
 	"github.com/jmoiron/sqlx"
 )
 

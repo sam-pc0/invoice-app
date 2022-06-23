@@ -12,7 +12,7 @@ type MySqlClient struct {
 }
 
 func NewSqlClient() *MySqlClient {
-	connStr := "root:Ops.@(64.227.28.17)/invoiceappdb"
+	connStr := "clopez:C@rlos2990@(143.208.180.250:21748)/invoiceappdb"
 	db, err := sqlx.Open("mysql", connStr)
 	if err != nil {
 		log.Fatalln("[DB Connection Error]", err)

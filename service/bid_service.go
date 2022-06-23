@@ -3,9 +3,9 @@ package service
 import (
 	"log"
 
-	"github.com/canxega/invoice-app/model"
-	"github.com/canxega/invoice-app/repository"
-	"github.com/canxega/invoice-app/repository/control"
+	"github.com/sam-pc0/invoice-app/model"
+	"github.com/sam-pc0/invoice-app/repository"
+	"github.com/sam-pc0/invoice-app/repository/control"
 )
 
 type BidService interface {

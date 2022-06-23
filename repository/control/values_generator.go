@@ -1,6 +1,6 @@
 package control
 
-import "github.com/canxega/invoice-app/model"
+import "github.com/sam-pc0/invoice-app/model"
 
 func GenerateItem() model.Item {
 	return model.Item{

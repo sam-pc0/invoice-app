@@ -1,4 +1,4 @@
-module github.com/canxega/invoice-app
+module github.com/sam-pc0/invoice-app
 
 go 1.13
 

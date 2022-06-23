@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/canxega/invoice-app/handlers"
+	"github.com/sam-pc0/invoice-app/handlers"
 	"github.com/gorilla/mux"
 )
 

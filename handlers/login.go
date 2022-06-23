@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/canxega/invoice-app/db"
+	"github.com/sam-pc0/invoice-app/db"
 )
 
 type Login struct {

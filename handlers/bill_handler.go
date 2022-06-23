@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"github.com/gorilla/mux"
 
-	"github.com/canxega/invoice-app/db"
-	"github.com/canxega/invoice-app/model"
-	"github.com/canxega/invoice-app/service"
-	"github.com/canxega/invoice-app/repository"
+	"github.com/sam-pc0/invoice-app/db"
+	"github.com/sam-pc0/invoice-app/model"
+	"github.com/sam-pc0/invoice-app/service"
+	"github.com/sam-pc0/invoice-app/repository"
 )
 
 
