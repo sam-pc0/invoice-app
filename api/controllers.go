@@ -13,6 +13,7 @@ func Controllers() *mux.Router {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/login", handlers.LoginHandler).Methods("POST") //login
+	router.HandleFunc("/device/create", handlers.DeviceHandler).Methods("GET") //create device
 	router.HandleFunc("/bills", billHandler.GetBills).Methods("GET") // get all invoices
 	router.HandleFunc("/bills", billHandler.CreateBill).Methods("POST") // create invoice
 	router.HandleFunc("/bills/bill/{id}/", billHandler.DeleteBill).Methods("DELETE") //delete invoice
