@@ -46,12 +46,12 @@
                 mt-6
               "
             >
-              <a
-                class="is-size-6 has-text-weight-light is-underline"
-                href="google.com"
-              >
-                Trouble login?
-              </a>
+              <!--               <a -->
+              <!-- class="is-size-6 has-text-weight-light is-underline" -->
+              <!-- href="google.com" -->
+              <!-- > -->
+              <!-- Trouble login? -->
+              <!-- </a> -->
               <button
                 v-animate-css.click="getClickAnimateObject()"
                 :disabled="!areFieldsWithData"
@@ -70,9 +70,14 @@
 
 <script>
 import authService from "@/services/auth";
+import SessionUtil from "@/plugins/session";
 
 export default {
   name: "Login",
+  mounted() {
+    if (!SessionUtil.isLogged()) return;
+    this.$router.replace("/invoices");
+  },
   data() {
     return {
       username: "",
@@ -89,6 +94,7 @@ export default {
       authService
         .login(this.username, this.password)
         .then(() => {
+          SessionUtil.setLogged();
           this.$router.push("/invoices");
           this.$toast.success("Login Successful");
         })

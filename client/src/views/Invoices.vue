@@ -7,9 +7,7 @@
       :destroy-on-hide="true"
     >
       <template #default="">
-        <TemplatesModal
-          @close="shouldShowTemplateModal = false"
-        />
+        <TemplatesModal @close="shouldShowTemplateModal = false" />
       </template>
     </b-modal>
 
@@ -20,9 +18,14 @@
       "
     >
       <h2 class="is-size-3 has-text-weight-bold">My invoices</h2>
-      <b-button @click="handleCreateInvoice" class="is-primary mr-2">
-        Create Invoice
-      </b-button>
+      <div>
+        <b-button @click="handleLogOut" class="is-secondary mr-2">
+          Log out
+        </b-button>
+        <b-button @click="handleCreateInvoice" class="is-primary mr-2">
+          Create Invoice
+        </b-button>
+      </div>
     </section>
     <div class="divider"></div>
     <!-- v-animate-css="'fadeInRight'" -->
@@ -69,6 +72,7 @@
 <script>
 import InvoiceService from "@/services/invoice";
 import TemplatesModal from "@/components/TemplatesModal";
+import SessionUtil from "@/plugins/session";
 
 export default {
   name: "Invoices",
@@ -102,6 +106,10 @@ export default {
         delay: index * 100,
         duration: 1000,
       };
+    },
+    handleLogOut() {
+      SessionUtil.setNotLogged();
+      this.$router.push(`/`);
     },
     handleCreateInvoice() {
       this.shouldShowTemplateModal = true;

@@ -7,16 +7,16 @@ export const templates = [
     name: "Invoice",
     code: 1110,
   },
-
-  {
-    name: "Contract Invoice",
-    code: 1000,
-  },
-  {
-    name: "Daily Time & Material Record",
-    code: 1001,
-  },
 ];
+
+/*   { */
+/* name: "Contract Invoice", */
+/* code: 1000, */
+/* }, */
+/* { */
+/* name: "Daily Time & Material Record", */
+/* code: 1001, */
+/* }, */
 
 export const templatesEnum = {
   BID_PROPOSAL: 1100,

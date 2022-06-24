@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import SessionUtil from "@/plugins/session";
 Vue.use(VueRouter);
 
 const routes = [
@@ -28,6 +29,11 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.name !== "login" && !SessionUtil.isLogged()) next({ name: "login" });
+  else next();
 });
 
 export default router;
