@@ -1,4 +1,4 @@
-const SESSION_KEY = "invoice-deviceid";
+const SESSION_KEY = "invoice-session";
 const VALUES = {
   LOGGED: "logged",
   NOT_LOGGED: "not_logged",

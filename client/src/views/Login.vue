@@ -39,6 +39,10 @@
               >
               </b-input>
             </b-field>
+            <span  v-if="isUserBlocked" class="is-size-6 has-text-danger mt-2 ml-2">
+              User blocked try again in a few minutes
+            </span>
+
             <section
               class="
                 form__options
@@ -70,6 +74,7 @@
 
 <script>
 import authService from "@/services/auth";
+import DeviceUtil from "@/plugins/device";
 import SessionUtil from "@/plugins/session";
 
 export default {
@@ -82,6 +87,7 @@ export default {
     return {
       username: "",
       password: "",
+      isUserBlocked: false,
     };
   },
   computed: {
@@ -91,14 +97,28 @@ export default {
   },
   methods: {
     handleFormSubmit() {
+      const deviceId = DeviceUtil.getDeviceId();
       authService
-        .login(this.username, this.password)
-        .then(() => {
+        .login(this.username, this.password, deviceId)
+        .then((response) => {
+          this.isUserBlocked = false
           SessionUtil.setLogged();
           this.$router.push("/invoices");
           this.$toast.success("Login Successful");
         })
-        .catch(() => this.$toast.error("Check your login information"));
+        .catch((error) => {
+          if (
+            error &&
+            error.response &&
+            error.response.data &&
+            error.response.data === "blocked"
+          ) {
+            this.isUserBlocked = true
+            return this.$toast.error("User blocked");
+          }
+          this.isUserBlocked = false
+          this.$toast.error("Check your login information");
+        });
     },
     getClickAnimateObject() {
       return {

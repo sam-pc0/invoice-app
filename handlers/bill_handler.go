@@ -13,7 +13,6 @@ import (
 	"github.com/sam-pc0/invoice-app/repository"
 )
 
-
 var (
 	client = db.NewSqlClient()
 	BillService = service.NewBillService(repository.NewBillRepository(client.DB))

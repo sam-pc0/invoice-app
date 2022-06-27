@@ -17,6 +17,6 @@ func Start() {
 	}
 
 	handlerServer := cors.AllowAll().Handler(router)
-	println("Servidor levantado en " + PORT)
+	println("Server run at port: " + PORT)
 	log.Fatalln(http.ListenAndServe(":"+PORT, handlerServer))
 }
