@@ -1,0 +1,5 @@
+rootProject.name = 'hey-offers-platform'
+include 'platform:gateway-service',
+        'platform:user-service',
+        'platform:product-service'
+
