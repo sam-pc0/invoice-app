@@ -1,11 +1,19 @@
 import * as React from 'react';
+import Button from '@mui/material/Button';
 import AppBarComponent from '../../components/AppBar';
 import CardProduct from '../../components/CardProduct';
 import Grid from '@mui/material/Grid';
 import Chip from '@mui/material/Chip';
+import { useNavigate } from "react-router-dom";
 
 
 export default function MyProfile() {
+    const navigate = useNavigate();
+
+    const onClick = () => {
+        navigate("/");
+    };
+
     const featuredPosts = [
         {
             title: 'Logitech MK345 combo inalámbrico',
@@ -44,16 +52,19 @@ export default function MyProfile() {
                         <h1>Nombre:</h1>
                     </Grid>
                     <Grid xs={3}>
-                        <Chip size='medium' label="Alejandro" />
+                        <Chip style={{ fontSize: 18 }} size='medium' label="Alejandro" />
                     </Grid>
                     <Grid xs={3}>
                         <h1>Apellido:</h1>
                     </Grid>
                     <Grid xs={3}>
-                        <Chip label="Sazo" />
+                        <Chip style={{ fontSize: 18 }} label="Sazo" />
                     </Grid>
+
+                    <Button onClick={onClick} style={{ background: "#2292A4", marginTop: '190px', marginLeft: '190px' }} variant="contained">Cerrar Sesión</Button>
                 </Grid>
                 <Grid xs={6} style={{ paddingTop: '50px', paddingLeft: '40px' }}>
+                    <h1>Ofertas publicadas </h1>
                     <Grid spacing={4}>
                         {featuredPosts.map((post) => (
                             <Grid item xs={12} md={9}>
